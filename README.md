@@ -1,5 +1,7 @@
 # TODO
 
-- [ ] Integrate and populate DB
+- [x] Add schemas to db
+- [x] Write seed script
 - [ ] Add auth
-- [ ] Fix compnents
+- [ ] Fix dark mode
+- [ ] Fix components
