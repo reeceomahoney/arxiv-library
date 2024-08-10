@@ -2,6 +2,7 @@
 
 - [x] Add schemas to db
 - [x] Write seed script
-- [ ] Add auth
+- [x] Add auth
+- [ ] Plug data into the front end
 - [ ] Fix dark mode
-- [ ] Fix components
+- [ ] Style login page

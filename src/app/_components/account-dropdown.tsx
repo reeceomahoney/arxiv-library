@@ -1,4 +1,7 @@
+"use client";
+
 import { CircleUser } from "lucide-react";
+import { signOut } from "next-auth/react";
 
 import { Button } from "~/app/_components/ui/button";
 import {
@@ -23,7 +26,7 @@ export default function AccountDropdown() {
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>Settings</DropdownMenuItem>
-        <DropdownMenuItem>Logout</DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => signOut()}>Logout</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
