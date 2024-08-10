@@ -19,11 +19,12 @@ import { type AdapterAccount } from "next-auth/adapters";
  */
 export const createTable = pgTableCreator((name) => `arxiv-library_${name}`);
 
-export const posts = createTable(
-  "post",
+export const folders = createTable(
+  "folder",
   {
     id: serial("id").primaryKey(),
-    name: varchar("name", { length: 256 }),
+    name: varchar("name", { length: 255 }).notNull(),
+    parentFolderId: integer("parent_folder_id"),
     createdById: varchar("created_by", { length: 255 })
       .notNull()
       .references(() => users.id),
@@ -31,14 +32,53 @@ export const posts = createTable(
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-      () => new Date()
+      () => new Date(),
     ),
   },
-  (example) => ({
-    createdByIdIdx: index("created_by_idx").on(example.createdById),
-    nameIndex: index("name_idx").on(example.name),
-  })
+  (folder) => ({
+    createdByIdIdx: index("created_by_idx").on(folder.createdById),
+    parentFolderIdIdx: index("parent_folder_id_idx").on(folder.parentFolderId),
+  }),
 );
+
+export const folderRelations = relations(folders, ({ one, many }) => ({
+  parentFolder: one(folders, {
+    fields: [folders.parentFolderId],
+    references: [folders.id],
+  }),
+  childFolders: many(folders),
+  papers: many(papers),
+}));
+
+export const papers = createTable(
+  "paper",
+  {
+    id: serial("id").primaryKey(),
+    title: varchar("title", { length: 255 }),
+    authors: varchar("authors", { length: 255 }).array(),
+    publicationDate: timestamp("publication_date"),
+    folderId: integer("folder_id").references(() => folders.id),
+    createdById: varchar("created_by", { length: 255 })
+      .notNull()
+      .references(() => users.id),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+      () => new Date(),
+    ),
+  },
+  (paper) => ({
+    folderIdIdx: index("folder_id_idx").on(paper.folderId),
+  }),
+);
+
+export const paperRelations = relations(papers, ({ one }) => ({
+  folder: one(folders, {
+    fields: [papers.folderId],
+    references: [folders.id],
+  }),
+}));
 
 export const users = createTable("user", {
   id: varchar("id", { length: 255 })
@@ -84,7 +124,7 @@ export const accounts = createTable(
       columns: [account.provider, account.providerAccountId],
     }),
     userIdIdx: index("account_user_id_idx").on(account.userId),
-  })
+  }),
 );
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
@@ -107,7 +147,7 @@ export const sessions = createTable(
   },
   (session) => ({
     userIdIdx: index("session_user_id_idx").on(session.userId),
-  })
+  }),
 );
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
@@ -126,5 +166,5 @@ export const verificationTokens = createTable(
   },
   (vt) => ({
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
-  })
+  }),
 );
