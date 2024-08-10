@@ -1,54 +1,75 @@
 import Link from "next/link";
+import { Search, LibraryBig } from "lucide-react";
 
+import { Input } from "~/app/_components/ui/input";
+import PaperTable from "~/app/_components/paper-table";
+import { Explorer, SheetExplorer } from "~/app/_components/explorer";
+import { ModeToggle } from "~/app/_components/mode-toggle";
+import AccountDropdown from "~/app/_components/account-dropdown";
+import { FolderDataProvider } from "~/app/_components/folder-context";
 import { getServerAuthSession } from "~/server/auth";
 
-export default async function Home() {
-  const session = await getServerAuthSession();
+// import type { Folder } from "~/lib/definitions";
+
+async function fetchFolderData() {
+  // const folderData: Folder[] = await prisma.folder.findMany();
+  // const paperData = await prisma.paper.findMany();
+  // return { folderData, paperData };
+}
+
+export default async function Page() {
+  // const { folderData, paperData } = await fetchFolderData();
+  const folderData = [];
+  const paperData = [];
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-      <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-        <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-          Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
-        </h1>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-          <Link
-            className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-            href="https://create.t3.gg/en/usage/first-steps"
-            target="_blank"
-          >
-            <h3 className="text-2xl font-bold">First Steps →</h3>
-            <div className="text-lg">
-              Just the basics - Everything you need to know to set up your
-              database and authentication.
+    <FolderDataProvider folderData={folderData} papers={paperData}>
+      <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+        <div className="bg-muted/40 hidden border-r md:block">
+          <div className="flex h-full max-h-screen flex-col">
+            <div className="sticky top-0 flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-2 font-semibold"
+              >
+                <LibraryBig className="h-6 w-6" />
+                <span className="">Arxiv Library</span>
+              </Link>
             </div>
-          </Link>
-          <Link
-            className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-            href="https://create.t3.gg/en/introduction"
-            target="_blank"
-          >
-            <h3 className="text-2xl font-bold">Documentation →</h3>
-            <div className="text-lg">
-              Learn more about Create T3 App, the libraries it uses, and how to
-              deploy it.
+            <div className="sticky top-[60px] overflow-y-auto">
+              <Explorer />
             </div>
-          </Link>
-        </div>
-        <div className="flex flex-col items-center gap-2">
-          <div className="flex flex-col items-center justify-center gap-4">
-            <p className="text-center text-2xl text-white">
-              {session && <span>Logged in as {session.user?.name}</span>}
-            </p>
-            <Link
-              href={session ? "/api/auth/signout" : "/api/auth/signin"}
-              className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
-            >
-              {session ? "Sign out" : "Sign in"}
-            </Link>
           </div>
         </div>
+        <div className="flex flex-col">
+          <header className="bg-muted/40 sticky top-0 z-10 flex h-14 items-center gap-4 border-b px-4 backdrop-blur lg:h-[60px] lg:px-6">
+            <SheetExplorer />
+            <div className="w-full flex-1">
+              <form>
+                <div className="relative">
+                  <Search className="text-muted-foreground absolute left-2.5 top-2.5 h-4 w-4" />
+                  <Input
+                    type="search"
+                    placeholder="Search papers..."
+                    className="bg-background w-full appearance-none pl-8 shadow-none md:w-2/3 lg:w-1/3"
+                  />
+                </div>
+              </form>
+            </div>
+            <ModeToggle />
+            <AccountDropdown />
+          </header>
+          <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+            <PaperTable />
+          </main>
+        </div>
       </div>
-    </main>
+    </FolderDataProvider>
   );
 }
+
+// const session = await getServerAuthSession();
+// <p>{session && <span>Logged in as {session.user?.name}</span>}</p>
+// <Link href={session ? "/api/auth/signout" : "/api/auth/signin"}>
+//   {session ? "Sign out" : "Sign in"}
+// </Link>
