@@ -44,7 +44,7 @@ export default async function Page() {
           <div className="flex h-full max-h-screen flex-col">
             <div className="sticky top-0 flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
               <Link
-                href="/dashboard"
+                href="/"
                 className="flex items-center gap-2 font-semibold"
               >
                 <LibraryBig className="h-6 w-6" />

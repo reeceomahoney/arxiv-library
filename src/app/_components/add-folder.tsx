@@ -1,5 +1,6 @@
-import { Plus } from "lucide-react";
+"use client";
 
+import { Plus } from "lucide-react";
 import { Button } from "~/app/_components/ui/button";
 import { Input } from "~/app/_components/ui/input";
 import { Label } from "~/app/_components/ui/label";
@@ -12,13 +13,31 @@ import {
   DialogTrigger,
   DialogClose,
 } from "~/app/_components/ui/dialog";
-
-import { createFolder } from "~/lib/actions";
-import { useFolderData } from "~/app/_components/folder-context";
+import { createFolder } from "~/server/actions";
+import { useLibrary, type FolderUI } from "./library-provider";
 
 export default function AddFolder() {
-  const { folders, currentId } = useFolderData();
-  const currentName = folders.find((folder) => folder.id === currentId)?.name;
+  const { folders, setFolders } = useLibrary();
+  const selectedFolder = folders.find((folder) => folder.isSelected);
+
+  if (!selectedFolder) {
+    return null;
+  }
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const newFolder = await createFolder(formData);
+    const newFolderUI = {
+      ...newFolder,
+      isOpen: false,
+      isSelected: false,
+      folders: [],
+    } as FolderUI;
+
+    // Router refresh wasn't working, so just adding to state
+    setFolders((prevFolders) => [...prevFolders, newFolderUI]);
+  };
 
   return (
     <Dialog>
@@ -31,19 +50,23 @@ export default function AddFolder() {
         <DialogHeader>
           <DialogTitle>Create Folder</DialogTitle>
         </DialogHeader>
-        <form action={createFolder}>
+        <form onSubmit={handleSubmit}>
           <div className="flex items-center gap-4 py-4">
             <Label htmlFor="name" className="text-right">
               Name
             </Label>
             <Input name="name" className="flex-grow" />
-            <input type="hidden" name="currentId" value={currentId} />
+            <input
+              type="hidden"
+              name="selectedFolderId"
+              value={selectedFolder.id}
+            />
             <DialogClose>
               <Button type="submit">Add</Button>
             </DialogClose>
           </div>
         </form>
-        <DialogFooter>Subfolder of {currentName}</DialogFooter>
+        <DialogFooter>Subfolder of {selectedFolder.name}</DialogFooter>
       </DialogContent>
     </Dialog>
   );

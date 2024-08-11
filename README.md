@@ -8,7 +8,8 @@
 - [x] Update UI to match new provider
 - [x] Fix dark mode
 - [x] Change font to inter
-- [ ] Fix create folder action
+- [x] Fix create folder action
 - [ ] Create add paper action from arxiv api 
+- [ ] Improve explorer clicking behaviour
 - [ ] Style login page
 - [ ] Remove unused code in schema relations

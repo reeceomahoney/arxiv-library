@@ -100,7 +100,7 @@ export function Explorer() {
     <div className="flex-1">
       <div className="flex items-center justify-between">
         <h1 className="p-6 text-lg font-semibold md:text-2xl">File Explorer</h1>
-        {/* <AddFolder /> */}
+        <AddFolder />
       </div>
       {renderFolders(nestFolders(folders))}
     </div>
