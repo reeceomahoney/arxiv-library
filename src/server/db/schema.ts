@@ -42,6 +42,7 @@ export const folders = createTable(
 );
 
 export const folderRelations = relations(folders, ({ one, many }) => ({
+  user: one(users, { fields: [folders.createdById], references: [users.id] }),
   parentFolder: one(folders, {
     fields: [folders.parentFolderId],
     references: [folders.id],
@@ -73,6 +74,7 @@ export const papers = createTable(
 );
 
 export const paperRelations = relations(papers, ({ one }) => ({
+  user : one(users, { fields: [papers.createdById], references: [users.id] }),
   folder: one(folders, { fields: [papers.folderId], references: [folders.id] }),
 }));
 
@@ -92,6 +94,8 @@ export const users = createTable("user", {
 
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
+  folders: many(folders),
+  papers: many(papers),
 }));
 
 export const accounts = createTable(

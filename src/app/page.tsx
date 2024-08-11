@@ -11,18 +11,20 @@ import { getServerAuthSession } from "~/server/auth";
 
 import { db } from "~/server/db";
 
-async function fetchFolderData() {
-  // const folderData = await db.
-  // const paperData = await prisma.paper.findMany();
-  // return { folderData, paperData };
+async function fetchData(userId: string) {
+  const folderData = await db.query.folders.findMany({
+    where: (folders, { eq }) => eq(folders.createdById, userId),
+  });
+
+  const paperData = await db.query.papers.findMany({
+    where: (papers, { eq }) => eq(papers.createdById, userId),
+  });
+
+  return { folderData, paperData };
 }
 
 export default async function Page() {
   const session = await getServerAuthSession();
-
-  // const { folderData, paperData } = await fetchFolderData();
-  const folderData = [];
-  const paperData = [];
 
   if (!session) {
     return (
@@ -33,11 +35,9 @@ export default async function Page() {
     );
   }
 
+  const { folderData, paperData } = await fetchData(session.user.id);
+
   return (
-    // <p>{session && <span>Logged in as {session.user?.name}</span>}</p>
-    // <Link href={session ? "/api/auth/signout" : "/api/auth/signin"}>
-    //   {session ? "Sign out" : "Sign in"}
-    // </Link>
     <FolderDataProvider folderData={folderData} papers={paperData}>
       <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
         <div className="hidden border-r bg-muted/40 md:block">
