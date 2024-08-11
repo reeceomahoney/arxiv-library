@@ -7,9 +7,9 @@ import { Button } from "~/app/_components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "~/app/_components/ui/sheet";
 import AddFolder from "~/app/_components/add-folder";
 
-import type { FolderUI } from "~/app/_components/library-context";
+import type { FolderUI } from "~/app/_components/library-provider";
 import { collectPapers } from "~/lib/utils";
-import { useLibrary } from "~/app/_components/library-context";
+import { useLibrary } from "~/app/_components/library-provider";
 
 // Nest folders into a tree structure for rendering
 export function nestFolders(folders: FolderUI[]): FolderUI[] {

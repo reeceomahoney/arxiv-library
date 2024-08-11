@@ -6,7 +6,7 @@ import PaperTable from "~/app/_components/paper-table";
 import { Explorer, SheetExplorer } from "~/app/_components/explorer";
 import { ModeToggle } from "~/app/_components/mode-toggle";
 import AccountDropdown from "~/app/_components/account-dropdown";
-import { LibraryProvider } from "~/app/_components/library-context";
+import { LibraryProvider } from "~/app/_components/library-provider";
 import { getServerAuthSession } from "~/server/auth";
 
 import { db } from "~/server/db";

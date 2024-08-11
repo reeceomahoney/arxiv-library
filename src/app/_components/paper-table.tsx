@@ -10,7 +10,7 @@ import {
 } from "~/app/_components/ui/table";
 import { Button } from "~/app/_components/ui/button";
 
-import { useLibrary } from "./library-context";
+import { useLibrary } from "./library-provider";
 import { collectPapers } from "~/lib/utils";
 
 export default function PaperTable() {

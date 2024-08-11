@@ -1,7 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-import type { FolderUI } from "~/app/_components/library-context";
+import type { FolderUI } from "~/app/_components/library-provider";
 import type { Paper } from "~/server/db/schema";
 
 export function cn(...inputs: ClassValue[]) {
