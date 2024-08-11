@@ -47,7 +47,7 @@ async function seed() {
     const allPapersFolder = await trx
       .insert(folders)
       .values({
-        name: "All papers",
+        name: "All Papers",
         createdById: user.id,
       })
       .returning();

@@ -19,6 +19,9 @@ import { type AdapterAccount } from "next-auth/adapters";
  */
 export const createTable = pgTableCreator((name) => `arxiv-library_${name}`);
 
+export type Folder = typeof folders.$inferSelect;
+export type Paper = typeof papers.$inferSelect;
+
 export const folders = createTable(
   "folder",
   {
