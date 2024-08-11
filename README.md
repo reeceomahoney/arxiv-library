@@ -5,8 +5,9 @@
 - [x] Add auth
 - [x] Plug data into the front end
 - [x] Fix typing in context provider
-- [ ] Update UI to match new provider
+- [x] Update UI to match new provider
 - [ ] Fix dark mode
-- [ ] Fix explorer layout
+- [ ] Change font to inter
+- [ ] Fix create paper action
 - [ ] Style login page
 - [ ] Remove unused code in schema relations

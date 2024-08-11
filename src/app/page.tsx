@@ -6,7 +6,7 @@ import PaperTable from "~/app/_components/paper-table";
 import { Explorer, SheetExplorer } from "~/app/_components/explorer";
 import { ModeToggle } from "~/app/_components/mode-toggle";
 import AccountDropdown from "~/app/_components/account-dropdown";
-import { FolderDataProvider } from "~/app/_components/folder-context";
+import { LibraryProvider } from "~/app/_components/library-context";
 import { getServerAuthSession } from "~/server/auth";
 
 import { db } from "~/server/db";
@@ -38,7 +38,7 @@ export default async function Page() {
   const { folderData, paperData } = await fetchData(session.user.id);
 
   return (
-    <FolderDataProvider folderData={folderData} papers={paperData}>
+    <LibraryProvider initialFolders={folderData} initialPapers={paperData}>
       <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
         <div className="hidden border-r bg-muted/40 md:block">
           <div className="flex h-full max-h-screen flex-col">
@@ -79,6 +79,6 @@ export default async function Page() {
           </main>
         </div>
       </div>
-    </FolderDataProvider>
+    </LibraryProvider>
   );
 }

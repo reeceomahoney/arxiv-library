@@ -10,14 +10,17 @@ import {
 } from "~/app/_components/ui/table";
 import { Button } from "~/app/_components/ui/button";
 
-import { useFolderData } from "~/app/_components/folder-context";
+import { useLibrary } from "./library-context";
 import { collectPapers } from "~/lib/utils";
 
 export default function PaperTable() {
-  const { folders, papers, currentId } = useFolderData();
-  const title = folders.find((folder) => folder.id === currentId)?.name;
+  const { folders, papers } = useLibrary();
+  const selectedFolder = folders.find((folder) => folder.isSelected);
+  const title = selectedFolder?.name;
 
-  const filteredPapers = collectPapers(currentId, folders, papers);
+  const filteredPapers = selectedFolder
+    ? collectPapers(selectedFolder.id, folders, papers)
+    : [];
 
   return (
     <>
@@ -25,26 +28,27 @@ export default function PaperTable() {
         <h1 className="text-lg font-semibold md:text-2xl">{title}</h1>
         <Button className="mt-4">Add Paper</Button>
       </div>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Title</TableHead>
-            <TableHead>Authors</TableHead>
-            <TableHead>Date</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {filteredPapers?.map((paper) => (
-            <TableRow key={paper.title}>
-              <TableCell>{paper.title}</TableCell>
-              <TableCell>{paper.authors.join(", ")}</TableCell>
-              <TableCell>
-                {new Date(paper.date).toLocaleDateString("en-US")}
-              </TableCell>
+      {filteredPapers.length > 0 ? (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Title</TableHead>
+              <TableHead>Authors</TableHead>
+              <TableHead>Date</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {filteredPapers.map((paper) => (
+              <TableRow key={paper.id}>
+                <TableCell>{paper.title}</TableCell>
+                <TableCell>{paper.authors?.join(", ")}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      ) : (
+        <p>No papers</p>
+      )}
     </>
   );
 }

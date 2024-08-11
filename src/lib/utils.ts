@@ -1,15 +1,17 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-import type { Folder, Paper } from "~/lib/definitions";
+import type { FolderUI } from "~/app/_components/library-context";
+import type { Paper } from "~/server/db/schema";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+// Returns all papers in a given folder and its subfolders
 export function collectPapers(
-  folderId: string,
-  allFolders: Folder[],
+  folderId: number,
+  allFolders: FolderUI[],
   allPapers: Paper[],
 ): Paper[] {
   const papers: Paper[] = allPapers.filter(
@@ -17,7 +19,7 @@ export function collectPapers(
   );
 
   const subfolders = allFolders.filter(
-    (subfolder) => subfolder.parentId === folderId,
+    (subfolder) => subfolder.parentFolderId === folderId,
   );
 
   for (const subfolder of subfolders) {
@@ -27,30 +29,3 @@ export function collectPapers(
 
   return papers;
 }
-
-export function nestFolders(folders: Folder[]): Folder[] {
-  const folderMap: Record<string, Folder> = {};
-  const nestedFolders: Folder[] = [];
-
-  // Map folders by id for easy lookup
-  folders.forEach((folder) => {
-    folderMap[folder.id] = { ...folder, folders: [] };
-  });
-
-  // Assign children to their respective parents or identify root folders
-  folders.forEach((folder) => {
-    const parentFolder = folder.parentId
-      ? folderMap[folder.parentId]
-      : undefined;
-    const currentFolder = folderMap[folder.id];
-
-    if (parentFolder && currentFolder) {
-      parentFolder.folders!.push(currentFolder);
-    } else if (currentFolder) {
-      nestedFolders.push(currentFolder);
-    }
-  });
-
-  return nestedFolders;
-}
-

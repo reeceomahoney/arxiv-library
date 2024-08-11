@@ -11,7 +11,11 @@ import React, {
 import type { Folder, Paper } from "~/server/db/schema";
 
 // Extend the Folder type to include UI state
-type FolderUI = Folder & { isOpen: boolean; isSelected: boolean };
+export type FolderUI = Folder & {
+  isOpen: boolean;
+  isSelected: boolean;
+  folders: FolderUI[];
+};
 
 // Define the context type
 type LibraryContextType = {
@@ -41,6 +45,7 @@ export const LibraryProvider: React.FC<LibraryProviderProps> = ({
       ...folder,
       isOpen: false,
       isSelected: folder.name === "All Papers",
+      folders: [],
     })),
   );
   const papers = initialPapers; // Might need to add state for papers

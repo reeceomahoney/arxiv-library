@@ -7,33 +7,45 @@ import { Button } from "~/app/_components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "~/app/_components/ui/sheet";
 import AddFolder from "~/app/_components/add-folder";
 
-import type { Folder } from "~/lib/definitions";
-import { collectPapers, nestFolders } from "~/lib/utils";
-import { useFolderData } from "~/app/_components/folder-context";
+import type { FolderUI } from "~/app/_components/library-context";
+import { collectPapers } from "~/lib/utils";
+import { useLibrary } from "~/app/_components/library-context";
+
+// Nest folders into a tree structure for rendering
+export function nestFolders(folders: FolderUI[]): FolderUI[] {
+  const foldersCopy = folders.map((folder) => ({ ...folder, folders: [] }));
+  const nestedFolders: FolderUI[] = [];
+
+  foldersCopy.forEach((folder) => {
+    const parentFolder = foldersCopy.find(
+      (f) => f.id === folder.parentFolderId,
+    ) as FolderUI;
+    if (parentFolder) {
+      parentFolder.folders.push(folder);
+    } else {
+      nestedFolders.push(folder);
+    }
+  });
+
+  return nestedFolders;
+}
 
 export function Explorer() {
-  const { folders, papers, setFolders, currentId, setCurrentId } =
-    useFolderData();
+  const { folders, papers, toggleFolderOpen, selectFolder } = useLibrary();
 
-  const toggleFolder = (id: string): void => {
-    setFolders((folders) =>
-      folders.map((f) => (f.id === id ? { ...f, isOpen: !f.isOpen } : f)),
-    );
-  };
-
-  const getNumPapers = (folder: Folder): number => {
+  const getNumPapers = (folder: FolderUI): number => {
     return collectPapers(folder.id, folders, papers).length;
   };
 
-  const renderFolders = (folders: Folder[], depth = 0) => (
+  const renderFolders = (folders: FolderUI[], depth = 0) => (
     <ul className="list-none">
       {folders.map((folder) => {
         const numPapers = getNumPapers(folder);
         return (
           <li key={folder.id}>
             <div
-              className={`text-muted-foreground hover:bg-muted cursor-pointer ${
-                currentId === folder.id ? "bg-muted" : ""
+              className={`cursor-pointer text-muted-foreground hover:bg-muted ${
+                folder.isOpen ? "bg-muted" : ""
               }`}
             >
               <div
@@ -43,23 +55,23 @@ export function Explorer() {
                 {folder.folders && folder.folders.length > 0 ? (
                   folder.isOpen ? (
                     <ChevronDown
-                      className="hover:text-primary mr-2"
-                      onClick={() => toggleFolder(folder.id)}
+                      className="mr-2 hover:text-primary"
+                      onClick={() => toggleFolderOpen(folder.id)}
                     />
                   ) : (
                     <ChevronRight
-                      className="hover:text-primary mr-2"
-                      onClick={() => toggleFolder(folder.id)}
+                      className="mr-2 hover:text-primary"
+                      onClick={() => toggleFolderOpen(folder.id)}
                     />
                   )
                 ) : (
                   <div className="mr-2 h-6 w-6"></div> // Placeholder for alignment
                 )}
                 <div
-                  className={`hover:text-primary flex items-center truncate ${
-                    currentId === folder.id ? "text-primary" : ""
+                  className={`flex items-center truncate hover:text-primary ${
+                    folder.isSelected ? "text-primary" : ""
                   }`}
-                  onClick={() => setCurrentId(folder.id)}
+                  onClick={() => selectFolder(folder.id)}
                 >
                   <FolderIcon
                     className={`mr-2 flex-shrink-0 fill-current ${
@@ -68,7 +80,7 @@ export function Explorer() {
                   />
                   <span className="truncate text-sm">{folder.name}</span>
                   {numPapers > 0 && (
-                    <span className="text-muted-foreground ml-2 text-sm">
+                    <span className="ml-2 text-sm text-muted-foreground">
                       ({numPapers})
                     </span>
                   )}
@@ -88,7 +100,7 @@ export function Explorer() {
     <div className="flex-1">
       <div className="flex items-center justify-between">
         <h1 className="p-6 text-lg font-semibold md:text-2xl">File Explorer</h1>
-        <AddFolder />
+        {/* <AddFolder /> */}
       </div>
       {renderFolders(nestFolders(folders))}
     </div>
