@@ -59,31 +59,33 @@ async function seed() {
     }
 
     // Seed data for folders
-    const folderData = [
-      {
-        name: "Folder 2",
+    const subfolderData = [];
+    for (let i = 1; i <= 5; i++) {
+      subfolderData.push({
+        name: `Folder ${i}`,
         createdById: user.id,
         parentFolderId: allPapersFolderId,
-      },
-      {
-        name: "Folder 3",
-        createdById: user.id,
-        parentFolderId: allPapersFolderId,
-      },
-    ];
-
-    for (let i = 1; i <= 3; i++) {
-      paperData.push({
-        title: `Paper ${i}`,
-        authors: [`Author ${i}`],
-        folderId: allPapersFolderId,
-        createdById: user.id,
       });
     }
 
     // Insert folders
-    for (const folder of folderData) {
-      await trx.insert(folders).values(folder);
+    const subfolders = await trx
+      .insert(folders)
+      .values(subfolderData)
+      .returning();
+
+    const folderIds = subfolders.map((folder) => folder.id);
+    folderIds.push(allPapersFolderId);
+
+    for (const folderId of folderIds) {
+      for (let i = 1; i <= 3; i++) {
+        paperData.push({
+          title: `Paper ${folderId}-${i}`,
+          authors: [`Author ${folderId}-${i}`],
+          folderId,
+          createdById: user.id,
+        });
+      }
     }
 
     // Insert papers
