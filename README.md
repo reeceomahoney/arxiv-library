@@ -10,8 +10,8 @@
 - [x] Change font to inter
 - [x] Fix create folder action
 - [x] Create add paper action from arxiv api 
+- [x] Style add paper form
 - [ ] Update paper schema to fit arxiv api
-- [ ] Style add paper form
 - [ ] Style paper table
 - [ ] Improve explorer clicking behaviour
 - [ ] Style login page

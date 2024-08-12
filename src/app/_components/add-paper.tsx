@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import { createPaper } from "../../server/actions";
 import { useLibrary } from "./library-provider";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 export default function AddPaper() {
   const { folders } = useLibrary();
@@ -16,18 +18,15 @@ export default function AddPaper() {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <label>
-          arXiv ID or Link:
-          <input
-            type="text"
-            value={arxivIdOrLink}
-            onChange={(e) => setArxivIdOrLink(e.target.value)}
-          />
-        </label>
-        <button type="submit">Create Paper</button>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <div className="flex w-full max-w-sm items-center space-x-2 rounded-lg border bg-muted/40 p-2">
+        <Input
+          type="text"
+          value={arxivIdOrLink}
+          onChange={(e) => setArxivIdOrLink(e.target.value)}
+        />
+        <Button type="submit">Add Paper</Button>
+      </div>
+    </form>
   );
 }
