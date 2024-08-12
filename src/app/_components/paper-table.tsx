@@ -8,10 +8,10 @@ import {
   TableHeader,
   TableRow,
 } from "~/app/_components/ui/table";
-import { Button } from "~/app/_components/ui/button";
+import AddPaper from "./add-paper";
 
-import { useLibrary } from "./library-provider";
 import { collectPapers } from "~/lib/utils";
+import { useLibrary } from "./library-provider";
 
 export default function PaperTable() {
   const { folders, papers } = useLibrary();
@@ -26,7 +26,7 @@ export default function PaperTable() {
     <>
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-semibold md:text-2xl">{title}</h1>
-        <Button className="mt-4">Add Paper</Button>
+        <AddPaper />
       </div>
       {filteredPapers.length > 0 ? (
         <Table>

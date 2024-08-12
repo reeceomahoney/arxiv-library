@@ -9,7 +9,10 @@
 - [x] Fix dark mode
 - [x] Change font to inter
 - [x] Fix create folder action
-- [ ] Create add paper action from arxiv api 
+- [x] Create add paper action from arxiv api 
+- [ ] Update paper schema to fit arxiv api
+- [ ] Style add paper form
+- [ ] Style paper table
 - [ ] Improve explorer clicking behaviour
 - [ ] Style login page
 - [ ] Remove unused code in schema relations
