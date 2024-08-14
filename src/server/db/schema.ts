@@ -7,6 +7,7 @@ import {
   serial,
   text,
   timestamp,
+  date,
   varchar,
 } from "drizzle-orm/pg-core";
 import { type AdapterAccount } from "next-auth/adapters";
@@ -59,7 +60,11 @@ export const papers = createTable(
     id: serial("id").primaryKey(),
     title: varchar("title", { length: 255 }),
     authors: varchar("authors", { length: 255 }).array(),
-    publicationDate: timestamp("publication_date"),
+    publicationDate: date("publication_date"),
+    summary: text("summary"),
+    primaryCategory: varchar("primary_category", { length: 255 }),
+    categories: varchar("categories", { length: 255 }).array(),
+    link: varchar("link", { length: 255 }),
     folderId: integer("folder_id").references(() => folders.id),
     createdById: varchar("created_by", { length: 255 })
       .notNull()
@@ -77,7 +82,7 @@ export const papers = createTable(
 );
 
 export const paperRelations = relations(papers, ({ one }) => ({
-  user : one(users, { fields: [papers.createdById], references: [users.id] }),
+  user: one(users, { fields: [papers.createdById], references: [users.id] }),
   folder: one(folders, { fields: [papers.folderId], references: [folders.id] }),
 }));
 

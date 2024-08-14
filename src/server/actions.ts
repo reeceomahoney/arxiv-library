@@ -47,6 +47,11 @@ export async function createPaper(
     .values({
       title: paperData.title,
       authors: paperData.authors,
+      publicationDate: paperData.published,
+      summary: paperData.summary,
+      primaryCategory: paperData.primaryCategory,
+      categories: paperData.categories,
+      link: paperData.link,
       folderId: selectedFolderId,
       createdById: session.user.id,
     })

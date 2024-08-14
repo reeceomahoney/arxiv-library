@@ -11,8 +11,9 @@
 - [x] Fix create folder action
 - [x] Create add paper action from arxiv api 
 - [x] Style add paper form
-- [ ] Update paper schema to fit arxiv api
+- [x] Update paper schema to fit arxiv api
 - [ ] Style paper table
 - [ ] Improve explorer clicking behaviour
 - [ ] Style login page
 - [ ] Remove unused code in schema relations
+- [ ] Add nextauth secret
