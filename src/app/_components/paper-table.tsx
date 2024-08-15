@@ -13,6 +13,21 @@ import AddPaper from "./add-paper";
 import { collectPapers } from "~/lib/utils";
 import { useLibrary } from "./library-provider";
 
+function getAuthorString(authors: string[] | null) {
+  if (!authors || authors.length === 0) return null;
+
+  const getLastName = (fullName: string) => {
+    const parts = fullName.split(" ");
+    return parts[parts.length - 1];
+  };
+
+  if (authors.length === 1) {
+    return getLastName(authors[0] ?? "");
+  } else {
+    return `${getLastName(authors[0] ?? "")} et al.`;
+  }
+}
+
 export default function PaperTable() {
   const { folders, papers } = useLibrary();
   const selectedFolder = folders.find((folder) => folder.isSelected);
@@ -32,16 +47,17 @@ export default function PaperTable() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Authors</TableHead>
-              <TableHead>Date</TableHead>
+              <TableHead className="w-2/3">Title</TableHead>
+              <TableHead className="w-1/6">Authors</TableHead>
+              <TableHead className="w-1/6">Publication Date</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredPapers.map((paper) => (
               <TableRow key={paper.id}>
                 <TableCell>{paper.title}</TableCell>
-                <TableCell>{paper.authors?.join(", ")}</TableCell>
+                <TableCell>{getAuthorString(paper.authors)}</TableCell>
+                <TableCell>{paper.publicationDate}</TableCell>
               </TableRow>
             ))}
           </TableBody>

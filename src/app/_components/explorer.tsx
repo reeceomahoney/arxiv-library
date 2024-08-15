@@ -45,7 +45,7 @@ export function Explorer() {
           <li key={folder.id}>
             <div
               className={`cursor-pointer text-muted-foreground hover:bg-muted ${
-                folder.isOpen ? "bg-muted" : ""
+                folder.isSelected ? "bg-muted" : ""
               }`}
             >
               <div

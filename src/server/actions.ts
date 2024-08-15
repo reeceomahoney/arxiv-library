@@ -42,7 +42,7 @@ export async function createPaper(
   );
   const paperData = await parseArxivResponse(response);
 
-  await db
+  const newPaper = await db
     .insert(papers)
     .values({
       title: paperData.title,
@@ -57,7 +57,7 @@ export async function createPaper(
     })
     .returning();
 
-  return paperData;
+  return newPaper[0];
 }
 
 function extractArxivId(arxivIdOrLink: string) {

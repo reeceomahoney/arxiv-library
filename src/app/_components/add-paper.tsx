@@ -7,7 +7,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
 export default function AddPaper() {
-  const { folders } = useLibrary();
+  const { folders, setPapers } = useLibrary();
   const [arxivIdOrLink, setArxivIdOrLink] = useState("");
 
   const selectedFolder = folders.find((folder) => folder.isSelected);
@@ -15,6 +15,8 @@ export default function AddPaper() {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const data = await createPaper(arxivIdOrLink, selectedFolder!.id);
+    if (!data) return;
+    setPapers((prevPapers) => [...prevPapers, data]);
   };
 
   return (

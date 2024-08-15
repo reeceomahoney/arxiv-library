@@ -9,10 +9,18 @@
 - [x] Fix dark mode
 - [x] Change font to inter
 - [x] Fix create folder action
-- [x] Create add paper action from arxiv api 
+- [x] Create add paper action from arxiv api
 - [x] Style add paper form
 - [x] Update paper schema to fit arxiv api
-- [ ] Style paper table
+- [x] Style paper table
+- [ ] Host
+- [ ] Add tick box paper delete
+- [ ] Add tick box paper move
+- [ ] Add delete folder
+- [ ] Add move folder
+- [ ] Add rename folder
+- [ ] Add paper focus tab 
+- [ ] Improve mobile UI
 - [ ] Improve explorer clicking behaviour
 - [ ] Style login page
 - [ ] Remove unused code in schema relations
