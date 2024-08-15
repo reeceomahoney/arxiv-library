@@ -13,7 +13,8 @@
 - [x] Style add paper form
 - [x] Update paper schema to fit arxiv api
 - [x] Style paper table
-- [ ] Host
+- [x] Add nextauth secret
+- [x] Host
 - [ ] Add tick box paper delete
 - [ ] Add tick box paper move
 - [ ] Add delete folder
@@ -24,4 +25,3 @@
 - [ ] Improve explorer clicking behaviour
 - [ ] Style login page
 - [ ] Remove unused code in schema relations
-- [ ] Add nextauth secret

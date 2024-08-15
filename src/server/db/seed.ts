@@ -14,13 +14,13 @@ import { parseStringPromise } from "xml2js";
 dotenv.config();
 
 async function createDB() {
-  const DATABASE_URL = process.env.DATABASE_URL;
+  const POSTGRES_URL = process.env.POSTGRES_URL;
 
-  if (!DATABASE_URL) {
-    throw new Error("DATABASE_URL is not set");
+  if (!POSTGRES_URL) {
+    throw new Error("POSTGRES_URL is not set");
   }
 
-  const queryClient = postgres(DATABASE_URL);
+  const queryClient = postgres(POSTGRES_URL);
   const db = drizzle(queryClient, { schema });
 
   return db;
