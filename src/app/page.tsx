@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Search, LibraryBig } from "lucide-react";
 
 import { Input } from "~/app/_components/ui/input";
@@ -43,11 +44,13 @@ export default async function Page() {
         <div className="hidden border-r bg-muted/40 md:block">
           <div className="flex h-full max-h-screen flex-col">
             <div className="sticky top-0 flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-              <Link
-                href="/"
-                className="flex items-center gap-2 font-semibold"
-              >
-                <LibraryBig className="h-6 w-6" />
+              <Link href="/" className="flex items-center gap-2 font-semibold">
+                <Image
+                  src="/apple-touch-icon.png"
+                  alt="Arxiv Library"
+                  width={24}
+                  height={24}
+                />
                 <span className="">Arxiv Library</span>
               </Link>
             </div>
