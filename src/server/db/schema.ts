@@ -87,12 +87,11 @@ export const paperRelations = relations(papers, ({ one }) => ({
 }));
 
 export const users = createTable("user", {
-  id: varchar("id", { length: 255 })
-    .notNull()
+  id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   name: varchar("name", { length: 255 }),
-  email: varchar("email", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
   emailVerified: timestamp("email_verified", {
     mode: "date",
     withTimezone: true,
