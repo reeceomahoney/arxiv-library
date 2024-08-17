@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   Table,
   TableBody,
@@ -8,7 +9,10 @@ import {
   TableHeader,
   TableRow,
 } from "~/app/_components/ui/table";
+
 import AddPaper from "./add-paper";
+import DeletePaper from "./delete-paper";
+import { Checkbox } from "./ui/checkbox";
 
 import { collectPapers } from "~/lib/utils";
 import { useLibrary } from "./library-provider";
@@ -29,7 +33,7 @@ function getAuthorString(authors: string[] | null) {
 }
 
 export default function PaperTable() {
-  const { folders, papers } = useLibrary();
+  const { folders, papers, setPapers } = useLibrary();
   const selectedFolder = folders.find((folder) => folder.isSelected);
   const title = selectedFolder?.name;
 
@@ -37,16 +41,47 @@ export default function PaperTable() {
     ? collectPapers(selectedFolder.id, folders, papers)
     : [];
 
+  const [selectedPapers, setSelectedPapers] = useState<number[]>([]);
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedPapers(filteredPapers.map((paper) => paper.id));
+    } else {
+      setSelectedPapers([]);
+    }
+  };
+
+  const handleSelectPaper = (paperId: number) => {
+    setSelectedPapers((prevSelected) =>
+      prevSelected.includes(paperId)
+        ? prevSelected.filter((id) => id !== paperId)
+        : [...prevSelected, paperId],
+    );
+  };
+
   return (
     <>
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-semibold md:text-2xl">{title}</h1>
-        <AddPaper />
+        <div className="flex items-center gap-4">
+          <AddPaper />
+          <DeletePaper
+            selectedPapers={selectedPapers}
+            setSelectedPapers={setSelectedPapers}
+            setPapers={setPapers}
+          />
+        </div>
       </div>
       {filteredPapers.length > 0 ? (
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>
+                <Checkbox
+                  checked={selectedPapers.length === filteredPapers.length}
+                  onCheckedChange={handleSelectAll}
+                />
+              </TableHead>
               <TableHead className="w-2/3">Title</TableHead>
               <TableHead className="w-1/6">Authors</TableHead>
               <TableHead className="w-1/6">Publication Date</TableHead>
@@ -54,7 +89,13 @@ export default function PaperTable() {
           </TableHeader>
           <TableBody>
             {filteredPapers.map((paper) => (
-              <TableRow key={paper.id}>
+              <TableRow key={paper.id} className="h-16">
+                <TableCell>
+                  <Checkbox
+                    checked={selectedPapers.includes(paper.id)}
+                    onCheckedChange={() => handleSelectPaper(paper.id)}
+                  />
+                </TableCell>
                 <TableCell>{paper.title}</TableCell>
                 <TableCell>{getAuthorString(paper.authors)}</TableCell>
                 <TableCell>{paper.publicationDate}</TableCell>

@@ -1,11 +1,12 @@
 "use server";
 
+import { inArray } from "drizzle-orm";
 import { parseStringPromise } from "xml2js";
 
 import {
   ArxivEntrySchema,
-  ArxivResponseSchema,
   ArxivPaperDataSchema,
+  ArxivResponseSchema,
 } from "~/lib/definitions";
 import { getServerAuthSession } from "~/server/auth";
 import { db } from "~/server/db";
@@ -58,6 +59,15 @@ export async function createPaper(
     .returning();
 
   return newPaper[0];
+}
+
+export async function deletePapers(paperIds: number[]) {
+  const session = await getServerAuthSession();
+  if (!session) return null;
+
+  await db.delete(papers).where(inArray(papers.id, paperIds));
+
+  return { success: true };
 }
 
 function extractArxivId(arxivIdOrLink: string) {
