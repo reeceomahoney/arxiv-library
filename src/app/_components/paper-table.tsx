@@ -12,6 +12,7 @@ import {
 
 import AddPaper from "./add-paper";
 import DeletePaper from "./delete-paper";
+import MovePaper from "./move-paper";
 import { Checkbox } from "./ui/checkbox";
 
 import { collectPapers } from "~/lib/utils";
@@ -65,6 +66,11 @@ export default function PaperTable() {
         <h1 className="text-lg font-semibold md:text-2xl">{title}</h1>
         <div className="flex items-center gap-4">
           <AddPaper />
+          <MovePaper
+            selectedPapers={selectedPapers}
+            setSelectedPapers={setSelectedPapers}
+            setPapers={setPapers}
+          />
           <DeletePaper
             selectedPapers={selectedPapers}
             setSelectedPapers={setSelectedPapers}

@@ -70,6 +70,18 @@ export async function deletePapers(paperIds: number[]) {
   return { success: true };
 }
 
+export async function movePapers(paperIds: number[], folderId: number) {
+  const session = await getServerAuthSession();
+  if (!session) return null;
+
+  await db
+    .update(papers)
+    .set({ folderId })
+    .where(inArray(papers.id, paperIds));
+
+  return { success: true };
+}
+
 function extractArxivId(arxivIdOrLink: string) {
   const match = arxivIdOrLink.match(
     /(?:arxiv\.org\/abs\/|arxiv\.org\/pdf\/)(\d+\.\d+|\d{4}\.\d{4,5})/,

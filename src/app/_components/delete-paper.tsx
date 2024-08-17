@@ -36,8 +36,12 @@ export default function DeletePaper({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" disabled={selectedPapers.length === 0}>
-          <Trash2 className="h-6 w-6" />
+        <Button
+          variant="destructive"
+          disabled={selectedPapers.length === 0}
+          size="icon"
+        >
+          <Trash2 />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>

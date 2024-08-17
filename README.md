@@ -15,8 +15,8 @@
 - [x] Style paper table
 - [x] Add nextauth secret
 - [x] Host
-- [ ] Add tick box paper delete
-- [ ] Add tick box paper move
+- [x] Add tick box paper delete
+- [x] Add tick box paper move
 - [ ] Add delete folder
 - [ ] Add move folder
 - [ ] Add rename folder
