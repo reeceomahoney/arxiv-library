@@ -25,3 +25,4 @@
 - [ ] Improve explorer clicking behaviour
 - [ ] Style login page
 - [ ] Remove unused code in schema relations
+- [ ] Fix rename folder bugs
