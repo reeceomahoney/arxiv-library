@@ -1,6 +1,6 @@
 "use server";
 
-import { inArray } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { parseStringPromise } from "xml2js";
 
 import {
@@ -28,6 +28,18 @@ export async function createFolder(formData: FormData) {
     .returning();
 
   return newFolder[0];
+}
+
+export async function renameFolder(folderId: number, name: string) {
+  const session = await getServerAuthSession();
+  if (!session) return null;
+
+  await db
+    .update(folders)
+    .set({ name })
+    .where(eq(folders.id, folderId));
+
+  return { success: true };
 }
 
 export async function createPaper(

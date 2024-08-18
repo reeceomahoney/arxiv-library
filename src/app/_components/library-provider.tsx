@@ -14,6 +14,7 @@ import type { Folder, Paper } from "~/server/db/schema";
 export type FolderUI = Folder & {
   isOpen: boolean;
   isSelected: boolean;
+  isRenaming: boolean;
   folders: FolderUI[];
 };
 
@@ -25,6 +26,8 @@ type LibraryContextType = {
   setPapers: Dispatch<SetStateAction<Paper[]>>;
   toggleFolderOpen: (id: number) => void;
   selectFolder: (id: number) => void;
+  setFolderRenaming: (folderId: number, isRenaming: boolean) => void;
+  setFolderName: (folderId: number, name: string) => void;
 };
 
 const LibraryContext = createContext<LibraryContextType | undefined>(undefined);
@@ -46,6 +49,7 @@ export const LibraryProvider: React.FC<LibraryProviderProps> = ({
       ...folder,
       isOpen: false,
       isSelected: folder.name === "All Papers",
+      isRenaming: false,
       folders: [],
     })),
   );
@@ -69,6 +73,22 @@ export const LibraryProvider: React.FC<LibraryProviderProps> = ({
     );
   };
 
+  const setFolderRenaming = (folderId: number, isRenaming: boolean) => {
+    setFolders((prevFolders) =>
+      prevFolders.map((folder) =>
+        folder.id === folderId ? { ...folder, isRenaming } : folder,
+      ),
+    );
+  };
+
+  const setFolderName = (folderId: number, name: string) => {
+    setFolders((prevFolders) =>
+      prevFolders.map((folder) =>
+        folder.id === folderId ? { ...folder, name } : folder,
+      ),
+    );
+  };
+
   return (
     <LibraryContext.Provider
       value={{
@@ -78,6 +98,8 @@ export const LibraryProvider: React.FC<LibraryProviderProps> = ({
         setPapers,
         toggleFolderOpen,
         selectFolder,
+        setFolderRenaming,
+        setFolderName,
       }}
     >
       {children}

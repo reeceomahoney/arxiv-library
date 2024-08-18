@@ -17,9 +17,9 @@
 - [x] Host
 - [x] Add tick box paper delete
 - [x] Add tick box paper move
+- [x] Add rename folder
 - [ ] Add delete folder
 - [ ] Add move folder
-- [ ] Add rename folder
 - [ ] Add paper focus tab 
 - [ ] Improve mobile UI
 - [ ] Improve explorer clicking behaviour
