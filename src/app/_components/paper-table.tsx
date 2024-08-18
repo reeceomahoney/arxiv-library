@@ -84,6 +84,7 @@ export default function PaperTable() {
             <TableRow>
               <TableHead>
                 <Checkbox
+                className="align-middle"
                   checked={selectedPapers.length === filteredPapers.length}
                   onCheckedChange={handleSelectAll}
                 />
@@ -98,6 +99,7 @@ export default function PaperTable() {
               <TableRow key={paper.id} className="h-16">
                 <TableCell>
                   <Checkbox
+                  className="align-middle"
                     checked={selectedPapers.includes(paper.id)}
                     onCheckedChange={() => handleSelectPaper(paper.id)}
                   />
