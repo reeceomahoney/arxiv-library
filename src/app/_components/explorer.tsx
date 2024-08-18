@@ -1,10 +1,18 @@
 "use client";
 
-import { Menu } from "lucide-react";
+import React, { useState } from "react";
+import { Folder, Menu } from "lucide-react";
 import { Folder as FolderIcon, ChevronRight, ChevronDown } from "lucide-react";
 
 import { Button } from "~/app/_components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "~/app/_components/ui/sheet";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "~/app/_components/ui/context-menu";
+
 import AddFolder from "~/app/_components/add-folder";
 
 import type { FolderUI } from "~/app/_components/library-provider";
@@ -30,6 +38,117 @@ export function nestFolders(folders: FolderUI[]): FolderUI[] {
   return nestedFolders;
 }
 
+function FolderContextMenu({
+  children,
+  folder,
+  onRename,
+}: {
+  children: React.ReactNode;
+  folder: FolderUI;
+  onRename: (id: number, newName: string) => void;
+}) {
+  const [isRenaming, setIsRenaming] = useState(false);
+  const [newName, setNewName] = useState(folder.name);
+
+  const handleRename = () => {
+    setIsRenaming(true);
+  };
+
+  const handleRenameSubmit = () => {
+    onRename(folder.id, newName);
+    setIsRenaming(false);
+  };
+
+  // Change this:
+  // Move isRenaming into the folder object
+  // Clicking the rename button will set isRenaming to true
+  // When true, the folder name will be replaced with an input field
+
+  return (
+    <ContextMenu>
+      <ContextMenuTrigger>{children}</ContextMenuTrigger>
+      <ContextMenuContent>
+        {isRenaming ? (
+          <div className="p-2">
+            <input
+              type="text"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              onBlur={handleRenameSubmit}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleRenameSubmit();
+                }
+              }}
+              autoFocus
+            />
+          </div>
+        ) : (
+          <>
+            <ContextMenuItem onClick={handleRename}>Rename</ContextMenuItem>
+            <ContextMenuItem>Delete</ContextMenuItem>
+          </>
+        )}
+      </ContextMenuContent>
+    </ContextMenu>
+  );
+}
+
+function FolderChevron({
+  folder,
+  toggleFolderOpen,
+}: {
+  folder: FolderUI;
+  toggleFolderOpen: (id: number) => void;
+}) {
+  return folder.folders && folder.folders.length > 0 ? (
+    folder.isOpen ? (
+      <ChevronDown
+        className="mr-2 hover:text-primary"
+        onClick={() => toggleFolderOpen(folder.id)}
+      />
+    ) : (
+      <ChevronRight
+        className="mr-2 hover:text-primary"
+        onClick={() => toggleFolderOpen(folder.id)}
+      />
+    )
+  ) : (
+    <div className="mr-2 h-6 w-6"></div> // Placeholder for alignment
+  );
+}
+
+function FolderContent({
+  folder,
+  selectFolder,
+  numPapers,
+}: {
+  folder: FolderUI;
+  selectFolder: (id: number) => void;
+  numPapers: number;
+}) {
+  return (
+    <div
+      className={`flex items-center truncate hover:text-primary ${
+        folder.isSelected ? "text-primary" : ""
+      }`}
+      onClick={() => selectFolder(folder.id)}
+    >
+      <FolderIcon
+        className={`mr-2 flex-shrink-0 fill-current ${
+          folder.name === "All Papers" ? "text-highlight" : ""
+        }`}
+      />
+      <span className="truncate text-sm">{folder.name}</span>
+      {numPapers > 0 && (
+        <span className="ml-2 text-sm text-muted-foreground">
+          ({numPapers})
+        </span>
+      )}
+    </div>
+  );
+}
+
 export function Explorer() {
   const { folders, papers, toggleFolderOpen, selectFolder } = useLibrary();
 
@@ -41,52 +160,35 @@ export function Explorer() {
     <ul className="list-none">
       {folders.map((folder) => {
         const numPapers = getNumPapers(folder);
+
+        const handleRename = (id: number, newName: string) => {
+          console.log(`Renaming folder ${id} to ${newName}`);
+        };
+
         return (
           <li key={folder.id}>
-            <div
-              className={`cursor-pointer text-muted-foreground hover:bg-muted ${
-                folder.isSelected ? "bg-muted" : ""
-              }`}
-            >
+            <FolderContextMenu folder={folder} onRename={handleRename}>
               <div
-                style={{ paddingLeft: `${0.5 + 0.5 * depth}rem` }}
-                className={`flex items-center p-2`}
+                className={`cursor-pointer text-muted-foreground hover:bg-muted ${
+                  folder.isSelected ? "bg-muted" : ""
+                }`}
               >
-                {folder.folders && folder.folders.length > 0 ? (
-                  folder.isOpen ? (
-                    <ChevronDown
-                      className="mr-2 hover:text-primary"
-                      onClick={() => toggleFolderOpen(folder.id)}
-                    />
-                  ) : (
-                    <ChevronRight
-                      className="mr-2 hover:text-primary"
-                      onClick={() => toggleFolderOpen(folder.id)}
-                    />
-                  )
-                ) : (
-                  <div className="mr-2 h-6 w-6"></div> // Placeholder for alignment
-                )}
                 <div
-                  className={`flex items-center truncate hover:text-primary ${
-                    folder.isSelected ? "text-primary" : ""
-                  }`}
-                  onClick={() => selectFolder(folder.id)}
+                  style={{ paddingLeft: `${0.5 + 0.5 * depth}rem` }}
+                  className={`flex items-center p-2`}
                 >
-                  <FolderIcon
-                    className={`mr-2 flex-shrink-0 fill-current ${
-                      folder.name === "All Papers" ? "text-highlight" : ""
-                    }`}
+                  <FolderChevron
+                    folder={folder}
+                    toggleFolderOpen={toggleFolderOpen}
                   />
-                  <span className="truncate text-sm">{folder.name}</span>
-                  {numPapers > 0 && (
-                    <span className="ml-2 text-sm text-muted-foreground">
-                      ({numPapers})
-                    </span>
-                  )}
+                  <FolderContent
+                    folder={folder}
+                    selectFolder={selectFolder}
+                    numPapers={numPapers}
+                  />
                 </div>
               </div>
-            </div>
+            </FolderContextMenu>
             {folder.isOpen && folder.folders && (
               <>{renderFolders(folder.folders, depth + 1)}</>
             )}
