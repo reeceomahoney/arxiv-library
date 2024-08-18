@@ -32,6 +32,7 @@ export default function AddFolder() {
       ...newFolder,
       isOpen: false,
       isSelected: false,
+      isRenaming: false,
       folders: [],
     } as FolderUI;
 
