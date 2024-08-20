@@ -19,7 +19,8 @@
 - [x] Add tick box paper move
 - [x] Add rename folder
 - [x] Add delete folder
-- [ ] Add move folder
+- [x] Add move folder
+- [ ] Make move paper drag and drop
 - [ ] Add paper focus tab 
 - [ ] Improve mobile UI
 - [ ] Style login page

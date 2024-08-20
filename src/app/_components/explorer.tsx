@@ -6,7 +6,8 @@ import {
   Folder as FolderIcon,
   Menu,
 } from "lucide-react";
-import React from "react";
+import React, { useRef } from "react";
+import { useDrag, useDrop } from "react-dnd";
 
 import { Button } from "~/app/_components/ui/button";
 import {
@@ -22,7 +23,7 @@ import AddFolder from "~/app/_components/add-folder";
 import type { FolderUI } from "~/app/_components/library-provider";
 import { useLibrary } from "~/app/_components/library-provider";
 import { collectPapers, nestFolders } from "~/lib/utils";
-import { deleteFolders, renameFolder } from "~/server/actions";
+import { deleteFolders, moveFolder, renameFolder } from "~/server/actions";
 
 function FolderContextMenu({
   children,
@@ -78,6 +79,8 @@ function FolderChevron({ folder }: { folder: FolderUI }) {
   );
 }
 
+// BUG: Submitting on blur doesn't work as it gets triggered instantly so a form submit is needed
+// BUG: autofocus doesn't work
 function FolderContent({
   folder,
   numPapers,
@@ -85,6 +88,32 @@ function FolderContent({
   folder: FolderUI;
   numPapers: number;
 }) {
+  const { selectFolder, setFolderRenaming, setFolderName, setFolders } =
+    useLibrary();
+  const ref = useRef(null);
+
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: "FOLDER",
+    item: { id: folder.id },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  }));
+
+  const [, drop] = useDrop(() => ({
+    accept: "FOLDER",
+    drop: async (item: { id: number }) => {
+      if (item.id !== folder.id) {
+        await moveFolder(item.id, folder.id);
+        setFolders((prevFolders) =>
+          prevFolders.map((f) =>
+            f.id === item.id ? { ...f, parentFolderId: folder.id } : f,
+          ),
+        );
+      }
+    },
+  }));
+
   const handleRenameSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newName =
@@ -94,16 +123,15 @@ function FolderContent({
     setFolderName(folder.id, newName);
     setFolderRenaming(folder.id, false);
   };
-  const { selectFolder, setFolderRenaming, setFolderName } = useLibrary();
 
-  // BUG: Submitting on blur doesn't work as it gets triggered instantly so a form submit is needed
-  // BUG: autofocus doesn't work
+  drag(drop(ref));
 
   return (
     <div
+      ref={ref}
       className={`flex items-center truncate hover:text-primary ${
         folder.isSelected ? "text-primary" : ""
-      }`}
+      } ${isDragging ? "opacity-50" : ""}`}
       onClick={() => selectFolder(folder.id)}
     >
       {folder.isRenaming ? (

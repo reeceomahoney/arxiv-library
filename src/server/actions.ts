@@ -51,6 +51,13 @@ export async function deleteFolders(folderIds: number[]) {
   return { success: true };
 }
 
+export async function moveFolder(folderId: number, newParentId: number) {
+  await db
+    .update(folders)
+    .set({ parentFolderId: newParentId })
+    .where(eq(folders.id, folderId));
+}
+
 export async function createPaper(
   arxivIdOrLink: string,
   selectedFolderId: number,

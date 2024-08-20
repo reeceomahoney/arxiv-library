@@ -46,5 +46,14 @@ export function nestFolders(folders: FolderUI[]): FolderUI[] {
     }
   });
 
-  return nestedFolders;
+  const sortFolders = (folders: FolderUI[]): FolderUI[] => {
+    return folders
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map((folder) => ({
+        ...folder,
+        folders: sortFolders(folder.folders),
+      }));
+  };
+
+  return sortFolders(nestedFolders);
 }

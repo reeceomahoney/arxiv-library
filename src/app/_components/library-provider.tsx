@@ -4,10 +4,13 @@ import React, {
   createContext,
   useContext,
   useState,
-  type ReactNode,
   type Dispatch,
+  type ReactNode,
   type SetStateAction,
 } from "react";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+
 import type { Folder, Paper } from "~/server/db/schema";
 
 // Extend the Folder type to include UI state
@@ -102,7 +105,7 @@ export const LibraryProvider: React.FC<LibraryProviderProps> = ({
         setFolderName,
       }}
     >
-      {children}
+      <DndProvider backend={HTML5Backend}>{children}</DndProvider>
     </LibraryContext.Provider>
   );
 };
