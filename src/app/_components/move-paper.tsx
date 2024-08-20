@@ -7,7 +7,7 @@ import {
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
 
-import { nestFolders } from "./explorer";
+import { nestFolders } from "~/lib/utils";
 import { type FolderUI, useLibrary } from "./library-provider";
 import type { Paper } from "~/server/db/schema";
 import { movePapers } from "~/server/actions";

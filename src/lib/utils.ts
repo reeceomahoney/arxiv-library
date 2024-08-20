@@ -29,3 +29,22 @@ export function collectPapers(
 
   return papers;
 }
+
+// Nest folders into a tree structure for rendering
+export function nestFolders(folders: FolderUI[]): FolderUI[] {
+  const foldersCopy = folders.map((folder) => ({ ...folder, folders: [] }));
+  const nestedFolders: FolderUI[] = [];
+
+  foldersCopy.forEach((folder) => {
+    const parentFolder = foldersCopy.find(
+      (f) => f.id === folder.parentFolderId,
+    ) as FolderUI;
+    if (parentFolder) {
+      parentFolder.folders.push(folder);
+    } else {
+      nestedFolders.push(folder);
+    }
+  });
+
+  return nestedFolders;
+}
