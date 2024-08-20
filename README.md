@@ -20,12 +20,13 @@
 - [x] Add rename folder
 - [x] Add delete folder
 - [ ] Add move folder
-- [ ] Add confirmation dialog for delete folder
-- [ ] Move add folder into context menu
 - [ ] Add paper focus tab 
 - [ ] Improve mobile UI
-- [ ] Improve explorer clicking behaviour
 - [ ] Style login page
+- [ ] Add landing page
+- [ ] Add confirmation dialog for delete folder
+- [ ] Move add folder into context menu
+- [ ] Improve explorer clicking behaviour
 - [ ] Remove unused code in schema relations
 - [ ] Fix rename folder bugs
 - [ ] Add search
