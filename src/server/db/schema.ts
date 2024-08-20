@@ -65,7 +65,9 @@ export const papers = createTable(
     primaryCategory: varchar("primary_category", { length: 255 }),
     categories: varchar("categories", { length: 255 }).array(),
     link: varchar("link", { length: 255 }),
-    folderId: integer("folder_id").references(() => folders.id),
+    folderId: integer("folder_id").references(() => folders.id, {
+      onDelete: "cascade",
+    }),
     createdById: varchar("created_by", { length: 255 })
       .notNull()
       .references(() => users.id),

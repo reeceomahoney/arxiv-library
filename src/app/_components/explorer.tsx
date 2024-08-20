@@ -15,47 +15,36 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "~/app/_components/ui/context-menu";
-import { Sheet, SheetContent, SheetTrigger } from "~/app/_components/ui/sheet";
 import { Input } from "~/app/_components/ui/input";
+import { Sheet, SheetContent, SheetTrigger } from "~/app/_components/ui/sheet";
 
 import AddFolder from "~/app/_components/add-folder";
-
 import type { FolderUI } from "~/app/_components/library-provider";
 import { useLibrary } from "~/app/_components/library-provider";
-import { collectPapers } from "~/lib/utils";
-import { renameFolder } from "~/server/actions";
-
-// Nest folders into a tree structure for rendering
-export function nestFolders(folders: FolderUI[]): FolderUI[] {
-  const foldersCopy = folders.map((folder) => ({ ...folder, folders: [] }));
-  const nestedFolders: FolderUI[] = [];
-
-  foldersCopy.forEach((folder) => {
-    const parentFolder = foldersCopy.find(
-      (f) => f.id === folder.parentFolderId,
-    ) as FolderUI;
-    if (parentFolder) {
-      parentFolder.folders.push(folder);
-    } else {
-      nestedFolders.push(folder);
-    }
-  });
-
-  return nestedFolders;
-}
+import { collectPapers, nestFolders } from "~/lib/utils";
+import { deleteFolders, renameFolder } from "~/server/actions";
 
 function FolderContextMenu({
   children,
   folder,
-  setFolderRenaming,
 }: {
   children: React.ReactNode;
   folder: FolderUI;
-  setFolderRenaming: (folderId: number, isRenaming: boolean) => void;
 }) {
+  const { setFolders, setFolderRenaming } = useLibrary();
+
   if (folder.name === "All Papers") {
     return <div onContextMenu={(e) => e.preventDefault()}>{children}</div>;
   }
+
+  const handleDeleteFolders = async () => {
+    await deleteFolders([folder.id]);
+    setFolders((prevFolders) =>
+      prevFolders.filter(
+        (f) => f.id !== folder.id && f.parentFolderId !== folder.id,
+      ),
+    );
+  };
 
   return (
     <ContextMenu>
@@ -64,19 +53,14 @@ function FolderContextMenu({
         <ContextMenuItem onClick={() => setFolderRenaming(folder.id, true)}>
           Rename
         </ContextMenuItem>
-        <ContextMenuItem>Delete</ContextMenuItem>
+        <ContextMenuItem onClick={handleDeleteFolders}>Delete</ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
   );
 }
 
-function FolderChevron({
-  folder,
-  toggleFolderOpen,
-}: {
-  folder: FolderUI;
-  toggleFolderOpen: (id: number) => void;
-}) {
+function FolderChevron({ folder }: { folder: FolderUI }) {
+  const { toggleFolderOpen } = useLibrary();
   return folder.folders && folder.folders.length > 0 ? (
     folder.isOpen ? (
       <ChevronDown
@@ -96,16 +80,10 @@ function FolderChevron({
 
 function FolderContent({
   folder,
-  selectFolder,
   numPapers,
-  setFolderRenaming,
-  setFolderName,
 }: {
   folder: FolderUI;
-  selectFolder: (id: number) => void;
   numPapers: number;
-  setFolderRenaming: (folderId: number, isRenaming: boolean) => void;
-  setFolderName: (folderId: number, name: string) => void;
 }) {
   const handleRenameSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -116,6 +94,7 @@ function FolderContent({
     setFolderName(folder.id, newName);
     setFolderRenaming(folder.id, false);
   };
+  const { selectFolder, setFolderRenaming, setFolderName } = useLibrary();
 
   // BUG: Submitting on blur doesn't work as it gets triggered instantly so a form submit is needed
   // BUG: autofocus doesn't work
@@ -155,14 +134,7 @@ function FolderContent({
 }
 
 export function Explorer() {
-  const {
-    folders,
-    papers,
-    toggleFolderOpen,
-    selectFolder,
-    setFolderRenaming,
-    setFolderName,
-  } = useLibrary();
+  const { folders, papers } = useLibrary();
 
   const getNumPapers = (folder: FolderUI): number => {
     return collectPapers(folder.id, folders, papers).length;
@@ -175,10 +147,7 @@ export function Explorer() {
 
         return (
           <li key={folder.id}>
-            <FolderContextMenu
-              folder={folder}
-              setFolderRenaming={setFolderRenaming}
-            >
+            <FolderContextMenu folder={folder}>
               <div
                 className={`cursor-pointer text-muted-foreground hover:bg-muted ${
                   folder.isSelected ? "bg-muted" : ""
@@ -188,17 +157,8 @@ export function Explorer() {
                   style={{ paddingLeft: `${0.5 + 0.5 * depth}rem` }}
                   className={`flex items-center p-2`}
                 >
-                  <FolderChevron
-                    folder={folder}
-                    toggleFolderOpen={toggleFolderOpen}
-                  />
-                  <FolderContent
-                    folder={folder}
-                    selectFolder={selectFolder}
-                    numPapers={numPapers}
-                    setFolderRenaming={setFolderRenaming}
-                    setFolderName={setFolderName}
-                  />
+                  <FolderChevron folder={folder} />
+                  <FolderContent folder={folder} numPapers={numPapers} />
                 </div>
               </div>
             </FolderContextMenu>

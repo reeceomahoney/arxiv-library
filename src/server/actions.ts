@@ -34,10 +34,19 @@ export async function renameFolder(folderId: number, name: string) {
   const session = await getServerAuthSession();
   if (!session) return null;
 
-  await db
-    .update(folders)
-    .set({ name })
-    .where(eq(folders.id, folderId));
+  await db.update(folders).set({ name }).where(eq(folders.id, folderId));
+
+  return { success: true };
+}
+
+export async function deleteFolders(folderIds: number[]) {
+  const session = await getServerAuthSession();
+  if (!session) return null;
+
+  await db.delete(folders).where(inArray(folders.id, folderIds));
+
+  // Schema can't self reference so we need to delete subfolders manually
+  await db.delete(folders).where(inArray(folders.parentFolderId, folderIds));
 
   return { success: true };
 }
@@ -86,10 +95,7 @@ export async function movePapers(paperIds: number[], folderId: number) {
   const session = await getServerAuthSession();
   if (!session) return null;
 
-  await db
-    .update(papers)
-    .set({ folderId })
-    .where(inArray(papers.id, paperIds));
+  await db.update(papers).set({ folderId }).where(inArray(papers.id, paperIds));
 
   return { success: true };
 }

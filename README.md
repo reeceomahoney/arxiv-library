@@ -18,11 +18,14 @@
 - [x] Add tick box paper delete
 - [x] Add tick box paper move
 - [x] Add rename folder
-- [ ] Add delete folder
+- [x] Add delete folder
 - [ ] Add move folder
+- [ ] Add confirmation dialog for delete folder
+- [ ] Move add folder into context menu
 - [ ] Add paper focus tab 
 - [ ] Improve mobile UI
 - [ ] Improve explorer clicking behaviour
 - [ ] Style login page
 - [ ] Remove unused code in schema relations
 - [ ] Fix rename folder bugs
+- [ ] Add search
