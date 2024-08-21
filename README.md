@@ -21,7 +21,7 @@
 - [x] Add delete folder
 - [x] Add move folder
 - [x] Make move paper drag and drop
-- [ ] Add paper focus tab 
+- [ ] Add paper focus tab
 - [ ] Improve mobile UI
 - [ ] Style login page
 - [ ] Add landing page
@@ -31,3 +31,4 @@
 - [ ] Remove unused code in schema relations
 - [ ] Fix rename folder bugs
 - [ ] Add search
+- [ ] Improve drag and drop behaviour
