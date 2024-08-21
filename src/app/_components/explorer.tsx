@@ -23,7 +23,12 @@ import AddFolder from "~/app/_components/add-folder";
 import type { FolderUI } from "~/app/_components/library-provider";
 import { useLibrary } from "~/app/_components/library-provider";
 import { collectPapers, nestFolders } from "~/lib/utils";
-import { deleteFolders, moveFolder, renameFolder } from "~/server/actions";
+import {
+  deleteFolders,
+  moveFolder,
+  movePapers,
+  renameFolder,
+} from "~/server/actions";
 
 function FolderContextMenu({
   children,
@@ -81,15 +86,17 @@ function FolderChevron({ folder }: { folder: FolderUI }) {
 
 // BUG: Submitting on blur doesn't work as it gets triggered instantly so a form submit is needed
 // BUG: autofocus doesn't work
-function FolderContent({
-  folder,
-  numPapers,
-}: {
-  folder: FolderUI;
-  numPapers: number;
-}) {
-  const { selectFolder, setFolderRenaming, setFolderName, setFolders } =
-    useLibrary();
+function FolderContent({ folder, depth }: { folder: FolderUI; depth: number }) {
+  const {
+    selectFolder,
+    setFolderRenaming,
+    setFolderName,
+    setFolders,
+    folders,
+    papers,
+    setSelectedPapers,
+    setPapers,
+  } = useLibrary();
   const ref = useRef(null);
 
   const [{ isDragging }, drag] = useDrag(() => ({
@@ -101,18 +108,55 @@ function FolderContent({
   }));
 
   const [, drop] = useDrop(() => ({
-    accept: "FOLDER",
-    drop: async (item: { id: number }) => {
-      if (item.id !== folder.id) {
-        await moveFolder(item.id, folder.id);
-        setFolders((prevFolders) =>
-          prevFolders.map((f) =>
-            f.id === item.id ? { ...f, parentFolderId: folder.id } : f,
-          ),
-        );
+    accept: ["FOLDER", "PAPER"],
+    drop: async (item: { id: number }, monitor) => {
+      // Folder drop
+      if (monitor.getItemType() === "FOLDER") {
+        await handleMoveFolder(item.id, folder.id);
+      } else if (monitor.getItemType() === "PAPER") {
+        await handleMovePapers(item.id, folder.id);
       }
     },
+    collect: (monitor) => ({
+      isOverFolder: monitor.isOver(),
+      isOverPaper: monitor.isOver(),
+    }),
   }));
+
+  const handleMoveFolder = async (itemId: number, folderId: number) => {
+    if (itemId === folderId) return;
+
+    await moveFolder(itemId, folderId);
+    setFolders((prevFolders) =>
+      prevFolders.map((f) =>
+        f.id === itemId ? { ...f, parentFolderId: folderId } : f,
+      ),
+    );
+  };
+
+  // We've had to use the functional state update to get the latest selected papers
+  const handleMovePapers = async (itemId: number, folderId: number) => {
+    setSelectedPapers((prevSelectedPapers) => {
+      // Add the current paper to selected papers if it's not already there
+      const draggedPapers = prevSelectedPapers.includes(itemId)
+        ? prevSelectedPapers
+        : [...prevSelectedPapers, itemId];
+
+      movePapers(draggedPapers, folderId)
+        .then(() => {
+          setPapers((prevPapers) =>
+            prevPapers.map((paper) =>
+              draggedPapers.includes(paper.id)
+                ? { ...paper, folderId: folderId }
+                : paper,
+            ),
+          );
+        })
+        .catch((error) => console.error(error));
+
+      return [];
+    });
+  };
 
   const handleRenameSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -126,53 +170,55 @@ function FolderContent({
 
   drag(drop(ref));
 
+  const numPapers = collectPapers(folder.id, folders, papers).length;
+
   return (
     <div
-      ref={ref}
-      className={`flex items-center truncate hover:text-primary ${
-        folder.isSelected ? "text-primary" : ""
-      } ${isDragging ? "opacity-50" : ""}`}
-      onClick={() => selectFolder(folder.id)}
+      style={{ paddingLeft: `${0.5 + 0.5 * depth}rem` }}
+      className={`flex items-center p-2`}
     >
-      {folder.isRenaming ? (
-        <form onSubmit={handleRenameSubmit}>
-          <Input
-            type="text"
-            defaultValue={folder.name}
-            className="h-6 text-sm"
-          />
-        </form>
-      ) : (
-        <>
-          <FolderIcon
-            className={`mr-2 flex-shrink-0 fill-current ${
-              folder.name === "All Papers" ? "text-highlight" : ""
-            }`}
-          />
-          <span className="truncate text-sm">{folder.name}</span>
-          {numPapers > 0 && (
-            <span className="ml-2 text-sm text-muted-foreground">
-              ({numPapers})
-            </span>
-          )}
-        </>
-      )}
+      <FolderChevron folder={folder} />
+      <div
+        ref={ref}
+        className={`flex items-center truncate hover:text-primary ${
+          folder.isSelected ? "text-primary" : ""
+        } ${isDragging ? "opacity-50" : ""}`}
+        onClick={() => selectFolder(folder.id)}
+      >
+        {folder.isRenaming ? (
+          <form onSubmit={handleRenameSubmit}>
+            <Input
+              type="text"
+              defaultValue={folder.name}
+              className="h-6 text-sm"
+            />
+          </form>
+        ) : (
+          <>
+            <FolderIcon
+              className={`mr-2 flex-shrink-0 fill-current ${
+                folder.name === "All Papers" ? "text-highlight" : ""
+              }`}
+            />
+            <span className="truncate text-sm">{folder.name}</span>
+            {numPapers > 0 && (
+              <span className="ml-2 text-sm text-muted-foreground">
+                ({numPapers})
+              </span>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 }
 
 export function Explorer() {
-  const { folders, papers } = useLibrary();
-
-  const getNumPapers = (folder: FolderUI): number => {
-    return collectPapers(folder.id, folders, papers).length;
-  };
+  const { folders } = useLibrary();
 
   const renderFolders = (folders: FolderUI[], depth = 0) => (
     <ul className="list-none">
       {folders.map((folder) => {
-        const numPapers = getNumPapers(folder);
-
         return (
           <li key={folder.id}>
             <FolderContextMenu folder={folder}>
@@ -181,13 +227,7 @@ export function Explorer() {
                   folder.isSelected ? "bg-muted" : ""
                 }`}
               >
-                <div
-                  style={{ paddingLeft: `${0.5 + 0.5 * depth}rem` }}
-                  className={`flex items-center p-2`}
-                >
-                  <FolderChevron folder={folder} />
-                  <FolderContent folder={folder} numPapers={numPapers} />
-                </div>
+                <FolderContent folder={folder} depth={depth} />
               </div>
             </FolderContextMenu>
             {folder.isOpen && folder.folders && (

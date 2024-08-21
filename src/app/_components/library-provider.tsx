@@ -26,6 +26,8 @@ type LibraryContextType = {
   folders: FolderUI[];
   setFolders: Dispatch<SetStateAction<FolderUI[]>>;
   papers: Paper[];
+  selectedPapers: number[];
+  setSelectedPapers: Dispatch<SetStateAction<number[]>>;
   setPapers: Dispatch<SetStateAction<Paper[]>>;
   toggleFolderOpen: (id: number) => void;
   selectFolder: (id: number) => void;
@@ -57,6 +59,7 @@ export const LibraryProvider: React.FC<LibraryProviderProps> = ({
     })),
   );
   const [papers, setPapers] = useState<Paper[]>(initialPapers);
+  const [selectedPapers, setSelectedPapers] = useState<number[]>([]);
 
   const toggleFolderOpen = (id: number) => {
     setFolders((prevFolders) =>
@@ -99,6 +102,8 @@ export const LibraryProvider: React.FC<LibraryProviderProps> = ({
         setFolders,
         papers,
         setPapers,
+        selectedPapers,
+        setSelectedPapers,
         toggleFolderOpen,
         selectFolder,
         setFolderRenaming,
