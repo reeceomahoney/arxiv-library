@@ -33,6 +33,8 @@ type LibraryContextType = {
   selectFolder: (id: number) => void;
   setFolderRenaming: (folderId: number, isRenaming: boolean) => void;
   setFolderName: (folderId: number, name: string) => void;
+  openPapers: Paper[];
+  setOpenPapers: Dispatch<SetStateAction<Paper[]>>;
 };
 
 const LibraryContext = createContext<LibraryContextType | undefined>(undefined);
@@ -60,6 +62,7 @@ export const LibraryProvider: React.FC<LibraryProviderProps> = ({
   );
   const [papers, setPapers] = useState<Paper[]>(initialPapers);
   const [selectedPapers, setSelectedPapers] = useState<number[]>([]);
+  const [openPapers, setOpenPapers] = useState<Paper[]>([]);
 
   const toggleFolderOpen = (id: number) => {
     setFolders((prevFolders) =>
@@ -108,6 +111,8 @@ export const LibraryProvider: React.FC<LibraryProviderProps> = ({
         selectFolder,
         setFolderRenaming,
         setFolderName,
+        openPapers,
+        setOpenPapers,
       }}
     >
       <DndProvider backend={HTML5Backend}>{children}</DndProvider>

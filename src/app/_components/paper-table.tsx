@@ -65,7 +65,14 @@ function PaperRow({
   isSelected: boolean;
   handleSelectPaper: (id: number) => void;
 }) {
+  const { setOpenPapers } = useLibrary();
   const ref = useRef(null);
+
+  const handleOpenPaper = () => {
+    setOpenPapers((prevPapers) => {
+      return prevPapers.includes(paper) ? prevPapers : [...prevPapers, paper];
+    });
+  };
 
   const [{ isDragging }, drag, preview] = useDrag(() => ({
     type: "PAPER",
@@ -80,7 +87,11 @@ function PaperRow({
   drag(ref);
 
   return (
-    <TableRow ref={ref} className={`${isDragging ? "opacity-50" : ""}`}>
+    <TableRow
+      ref={ref}
+      className={`${isDragging ? "opacity-50" : ""}`}
+      onDoubleClick={handleOpenPaper}
+    >
       <TableCell>
         <Checkbox
           className="align-middle"

@@ -6,7 +6,7 @@ import AccountDropdown from "~/app/_components/account-dropdown";
 import { Explorer, SheetExplorer } from "~/app/_components/explorer";
 import { LibraryProvider } from "~/app/_components/library-provider";
 import { ModeToggle } from "~/app/_components/mode-toggle";
-import PaperTable from "~/app/_components/paper-table";
+import PaperTabs from "~/app/_components/paper-tabs";
 import { Input } from "~/app/_components/ui/input";
 import { getServerAuthSession } from "~/server/auth";
 
@@ -78,7 +78,7 @@ export default async function Page() {
             <AccountDropdown />
           </header>
           <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-            <PaperTable />
+            <PaperTabs />
           </main>
         </div>
       </div>
