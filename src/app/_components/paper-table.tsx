@@ -75,7 +75,7 @@ function PaperRow({
 
   useEffect(() => {
     preview(getEmptyImage(), { captureDraggingState: true });
-  }, []);
+  }, [preview]);
 
   drag(ref);
 
