@@ -57,3 +57,18 @@ export function nestFolders(folders: FolderUI[]): FolderUI[] {
 
   return sortFolders(nestedFolders);
 }
+
+export function getAuthorString(authors: string[] | null) {
+  if (!authors || authors.length === 0) return null;
+
+  const getLastName = (fullName: string) => {
+    const parts = fullName.split(" ");
+    return parts[parts.length - 1];
+  };
+
+  if (authors.length === 1) {
+    return getLastName(authors[0] ?? "");
+  } else {
+    return `${getLastName(authors[0] ?? "")} et al.`;
+  }
+}

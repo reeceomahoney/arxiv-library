@@ -17,24 +17,10 @@ import AddPaper from "./add-paper";
 import DeletePaper from "./delete-paper";
 import { Checkbox } from "./ui/checkbox";
 
-import { collectPapers } from "~/lib/utils";
+import { collectPapers, getAuthorString } from "~/lib/utils";
 import type { Paper } from "~/server/db/schema";
 import { useLibrary } from "./library-provider";
 
-function getAuthorString(authors: string[] | null) {
-  if (!authors || authors.length === 0) return null;
-
-  const getLastName = (fullName: string) => {
-    const parts = fullName.split(" ");
-    return parts[parts.length - 1];
-  };
-
-  if (authors.length === 1) {
-    return getLastName(authors[0] ?? "");
-  } else {
-    return `${getLastName(authors[0] ?? "")} et al.`;
-  }
-}
 
 function PaperDragLayer({ count }: { count: number }) {
   const { itemType, isDragging, clientOffset } = useDragLayer((monitor) => ({
