@@ -22,15 +22,15 @@
 - [x] Add move folder
 - [x] Make move paper drag and drop
 - [x] Add paper focus tab
+- [x] Add landing page
 - [ ] Improve mobile UI
 - [ ] Style login page
-- [ ] Add landing page
+- [ ] Add search
 - [ ] Add confirmation dialog for delete folder
 - [ ] Move add folder into context menu
 - [ ] Improve explorer clicking behaviour
 - [ ] Remove unused code in schema relations
 - [ ] Fix rename folder bugs
-- [ ] Add search
 - [ ] Improve folder and paper drag and drop behaviour
 - [ ] Add tab drag to reorder
 - [ ] Fix light mode colors
