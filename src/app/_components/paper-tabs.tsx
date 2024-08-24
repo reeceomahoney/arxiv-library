@@ -13,36 +13,49 @@ import {
 import { getAuthorString } from "~/lib/utils";
 
 export default function PaperTabs() {
-  const { openPapers, setOpenPapers } = useLibrary();
+  const { openPapers, setOpenPapers, activeTab, setActiveTab } = useLibrary();
 
   const handleClosePaper = (id: number) => {
-    setOpenPapers((prevPapers) => prevPapers.filter((p) => p.id !== id));
+    setOpenPapers((prevPapers) => {
+      const newPapers = prevPapers.filter((p) => p.id !== id);
+      if (newPapers.length > 0) {
+        if (activeTab === String(id)) {
+          setActiveTab(String(newPapers[newPapers.length - 1]!.id));
+        }
+      } else {
+        setActiveTab("my-library");
+      }
+      return newPapers;
+    });
   };
-
-  // TODO: Fix close button UI and behavior
 
   return (
     <Tabs
       defaultValue="my-library"
+      value={activeTab}
+      onValueChange={setActiveTab}
       className="flex h-full w-[calc(100vw-328px)] flex-col"
     >
-      <TabsList className="w-full justify-start">
-        <TabsTrigger value="my-library" className="w-60 shrink-0">
+      <TabsList className="w-full justify-start gap-1">
+        <TabsTrigger
+          value="my-library"
+          className="w-60 shrink-0 data-[state=inactive]:hover:bg-gray-700"
+        >
           My Library
         </TabsTrigger>
         {openPapers.map((paper) => (
           <TabsTrigger
             key={paper.id}
             value={String(paper.id)}
-            className="w-60 min-w-0 shrink"
+            className="group w-60 min-w-0 shrink data-[state=inactive]:hover:bg-gray-700"
           >
             <span className="min-w-0 truncate text-left">{paper.title}</span>
             <X
-              onClick={(e) => {
+              onPointerDown={(e) => {
                 e.stopPropagation();
                 handleClosePaper(paper.id);
               }}
-              className="ml-2 w-12 rounded-md px-1 hover:bg-muted/40"
+              className="ml-2 h-5 w-5 shrink-0 rounded-md p-0.5 hover:bg-gray-600"
             />
           </TabsTrigger>
         ))}

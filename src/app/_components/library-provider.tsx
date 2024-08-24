@@ -35,6 +35,8 @@ type LibraryContextType = {
   setFolderName: (folderId: number, name: string) => void;
   openPapers: Paper[];
   setOpenPapers: Dispatch<SetStateAction<Paper[]>>;
+  activeTab: string;
+  setActiveTab: Dispatch<SetStateAction<string>>;
 };
 
 const LibraryContext = createContext<LibraryContextType | undefined>(undefined);
@@ -63,6 +65,7 @@ export const LibraryProvider: React.FC<LibraryProviderProps> = ({
   const [papers, setPapers] = useState<Paper[]>(initialPapers);
   const [selectedPapers, setSelectedPapers] = useState<number[]>([]);
   const [openPapers, setOpenPapers] = useState<Paper[]>([]);
+  const [activeTab, setActiveTab] = useState("my-library");
 
   const toggleFolderOpen = (id: number) => {
     setFolders((prevFolders) =>
@@ -113,6 +116,8 @@ export const LibraryProvider: React.FC<LibraryProviderProps> = ({
         setFolderName,
         openPapers,
         setOpenPapers,
+        activeTab,
+        setActiveTab,
       }}
     >
       <DndProvider backend={HTML5Backend}>{children}</DndProvider>

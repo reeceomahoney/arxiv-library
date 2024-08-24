@@ -51,13 +51,14 @@ function PaperRow({
   isSelected: boolean;
   handleSelectPaper: (id: number) => void;
 }) {
-  const { setOpenPapers } = useLibrary();
+  const { setOpenPapers, setActiveTab } = useLibrary();
   const ref = useRef(null);
 
   const handleOpenPaper = () => {
     setOpenPapers((prevPapers) => {
       return prevPapers.includes(paper) ? prevPapers : [...prevPapers, paper];
     });
+    setActiveTab(String(paper.id));
   };
 
   const [{ isDragging }, drag, preview] = useDrag(() => ({
@@ -121,7 +122,7 @@ export default function PaperTable() {
   return (
     <>
       <PaperDragLayer count={selectedPapers.length} />
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between py-4">
         <h1 className="text-lg font-semibold md:text-2xl">{title}</h1>
         <div className="flex items-center gap-4">
           <AddPaper />
