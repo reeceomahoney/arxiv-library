@@ -75,7 +75,7 @@ export default async function Page() {
               </form>
             </div>
             <ModeToggle />
-            <AccountDropdown />
+            <AccountDropdown userName={session.user.name ?? ''} />
           </header>
           <main className="grow p-4 lg:p-6">
             <PaperTabs />
