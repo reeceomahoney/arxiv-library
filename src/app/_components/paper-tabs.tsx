@@ -77,7 +77,7 @@ export default function PaperTabs() {
             {paper.publicationDate?.split("-")[0] ?? ""}
           </h2>
           <iframe
-            src={paper.link?.replace("abs", "pdf") ?? ""}
+            src={paper.link?.replace("abs", "pdf").replace("http", "https") ?? ""}
             className="grow"
           />
         </TabsContent>
