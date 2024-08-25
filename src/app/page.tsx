@@ -62,7 +62,7 @@ export default async function Page() {
               </div>
             </div>
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col overflow-hidden">
             <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-muted/40 px-4 backdrop-blur lg:h-[60px] lg:px-6">
               <SheetExplorer />
               <div className="w-full flex-1">

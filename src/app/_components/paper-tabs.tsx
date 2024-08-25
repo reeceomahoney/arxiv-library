@@ -34,12 +34,12 @@ export default function PaperTabs() {
       defaultValue="my-library"
       value={activeTab}
       onValueChange={setActiveTab}
-      className="flex h-full w-[calc(100vw-328px)] flex-col"
+      className="flex h-full flex-col"
     >
       <TabsList className="w-full justify-start gap-1">
         <TabsTrigger
           value="my-library"
-          className="w-60 shrink-0 data-[state=inactive]:hover:bg-gray-700"
+          className="w-60 shrink data-[state=inactive]:hover:bg-gray-700"
         >
           My Library
         </TabsTrigger>
