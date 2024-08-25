@@ -22,6 +22,7 @@ import { Sheet, SheetContent, SheetTrigger } from "~/app/_components/ui/sheet";
 import AddFolder from "~/app/_components/add-folder";
 import type { FolderUI } from "~/app/_components/library-provider";
 import { useLibrary } from "~/app/_components/library-provider";
+import { DialogDescription, DialogTitle } from "~/app/_components/ui/dialog";
 import { collectPapers, nestFolders } from "~/lib/utils";
 import {
   deleteFolders,
@@ -260,6 +261,9 @@ export function SheetExplorer() {
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="flex flex-col">
+        {/* To prevent error message */}
+        <DialogTitle> </DialogTitle>
+        <DialogDescription> </DialogDescription>
         <Explorer />
       </SheetContent>
     </Sheet>

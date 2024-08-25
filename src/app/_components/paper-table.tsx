@@ -21,7 +21,6 @@ import { collectPapers, getAuthorString } from "~/lib/utils";
 import type { Paper } from "~/server/db/schema";
 import { useLibrary } from "./library-provider";
 
-
 function PaperDragLayer({ count }: { count: number }) {
   const { itemType, isDragging, clientOffset } = useDragLayer((monitor) => ({
     itemType: monitor.getItemType(),
@@ -88,7 +87,9 @@ function PaperRow({
       </TableCell>
       <TableCell>{paper.title}</TableCell>
       <TableCell>{getAuthorString(paper.authors)}</TableCell>
-      <TableCell>{paper.publicationDate}</TableCell>
+      <TableCell className="hidden md:table-cell">
+        {paper.publicationDate}
+      </TableCell>
     </TableRow>
   );
 }
@@ -122,9 +123,9 @@ export default function PaperTable() {
   return (
     <>
       <PaperDragLayer count={selectedPapers.length} />
-      <div className="flex items-center justify-between py-4">
+      <div className="flex flex-col items-start justify-between py-4 md:flex-row md:items-center">
         <h1 className="text-lg font-semibold md:text-2xl">{title}</h1>
-        <div className="flex items-center gap-4">
+        <div className="mt-4 flex w-full items-center gap-4 md:mt-0 md:w-auto">
           <AddPaper />
           <DeletePaper
             selectedPapers={selectedPapers}
@@ -146,7 +147,9 @@ export default function PaperTable() {
               </TableHead>
               <TableHead className="w-2/3">Title</TableHead>
               <TableHead className="w-1/6">Authors</TableHead>
-              <TableHead className="w-1/6">Publication Date</TableHead>
+              <TableHead className="hidden w-1/6 md:table-cell">
+                Publication Date
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

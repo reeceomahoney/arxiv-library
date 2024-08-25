@@ -1,5 +1,6 @@
 "use cleint";
 
+import { Plus } from "lucide-react";
 import React, { useState } from "react";
 import { createPaper } from "../../server/actions";
 import { useLibrary } from "./library-provider";
@@ -20,14 +21,20 @@ export default function AddPaper() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="grow">
       <div className="flex w-full max-w-sm items-center space-x-2 rounded-lg border bg-muted/40 p-2">
         <Input
           type="text"
           value={arxivIdOrLink}
           onChange={(e) => setArxivIdOrLink(e.target.value)}
+          className="lg:w-60"
         />
-        <Button type="submit">Add Paper</Button>
+        <Button type="submit" className="w-10 md:w-auto">
+          <span className="hidden md:block">Add Paper</span>
+          <span className="block md:hidden">
+            <Plus />
+          </span>
+        </Button>
       </div>
     </form>
   );
