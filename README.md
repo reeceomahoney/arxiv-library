@@ -26,6 +26,8 @@
 - [x] Improve mobile UI
 - [x] Style login page
 - [x] Add search
+- [ ] Add import papers
+- [ ] Add export bibtex
 - [ ] Add confirmation dialog for delete folder
 - [ ] Move add folder into context menu
 - [ ] Improve explorer clicking behaviour
