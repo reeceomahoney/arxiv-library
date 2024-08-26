@@ -3,8 +3,8 @@
 import { Search } from "lucide-react";
 import React, { useEffect } from "react";
 
-import { Input } from "./ui/input";
-import { useLibrary } from "./LibraryProvider";
+import { Input } from "../ui/input";
+import { useLibrary } from "../providers/LibraryProvider";
 
 export default function PaperSearch() {
   const { papers, setPapers } = useLibrary();

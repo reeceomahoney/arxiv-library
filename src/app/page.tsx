@@ -1,14 +1,14 @@
-import AccountDropdown from "~/app/components/AccountDropdown";
-import { Explorer, SheetExplorer } from "~/app/components/Explorer";
-import { LibraryProvider } from "~/app/components/LibraryProvider";
-import { ModeToggle } from "~/app/components/ModeToggle";
-import PaperTabs from "~/app/components/PaperTabs";
+import AccountDropdown from "~/app/components/header/AccountDropdown";
+import { Explorer, SheetExplorer } from "~/app/components/sidebar/Explorer";
+import { LibraryProvider } from "~/app/components/providers/LibraryProvider";
+import { ModeToggle } from "~/app/components/header/ModeToggle";
+import PaperTabs from "~/app/components/papers/PaperTabs";
 import { getServerAuthSession } from "~/server/auth";
 import { db } from "~/server/db";
 import LandingPage from "./components/LandingPage";
-import PaperSearch from "./components/PaperSearch";
-import { ThemeProvider } from "./components/ThemeProvider";
-import Title from "./components/Title";
+import PaperSearch from "./components/header/PaperSearch";
+import { ThemeProvider } from "./components/providers/ThemeProvider";
+import Title from "./components/sidebar/Title";
 
 async function fetchData(userId: string) {
   const folderData = await db.query.folders.findMany({

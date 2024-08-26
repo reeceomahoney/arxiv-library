@@ -2,10 +2,10 @@
 
 import { Plus } from "lucide-react";
 import React, { useState } from "react";
-import { createPaper } from "../../server/actions";
-import { useLibrary } from "./LibraryProvider";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+import { createPaper } from "../../../server/actions";
+import { useLibrary } from "../providers/LibraryProvider";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
 export default function AddPaper() {
   const { folders, setPapers } = useLibrary();

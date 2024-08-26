@@ -15,11 +15,11 @@ import {
 } from "~/app/components/ui/table";
 import AddPaper from "./AddPaper";
 import DeletePaper from "./DeletePaper";
-import { Checkbox } from "./ui/checkbox";
+import { Checkbox } from "../ui/checkbox";
 
 import { collectPapers, getAuthorString } from "~/lib/utils";
 import type { Paper } from "~/server/db/schema";
-import { useLibrary } from "./LibraryProvider";
+import { useLibrary } from "../providers/LibraryProvider";
 
 function PaperDragLayer({ count }: { count: number }) {
   const { itemType, isDragging, clientOffset } = useDragLayer((monitor) => ({

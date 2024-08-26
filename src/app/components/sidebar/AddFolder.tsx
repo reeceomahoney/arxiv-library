@@ -14,7 +14,10 @@ import {
   DialogClose,
 } from "~/app/components/ui/dialog";
 import { createFolder } from "~/server/actions";
-import { useLibrary, type FolderUI } from "./LibraryProvider";
+import {
+  useLibrary,
+  type FolderUI,
+} from "~/app/components/providers/LibraryProvider";
 
 export default function AddFolder() {
   const { folders, setFolders } = useLibrary();

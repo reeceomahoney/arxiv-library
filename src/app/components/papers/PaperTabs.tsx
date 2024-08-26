@@ -2,8 +2,8 @@
 
 import { X } from "lucide-react";
 
-import { useLibrary } from "~/app/components/LibraryProvider";
-import PaperTable from "~/app/components/PaperTable";
+import { useLibrary } from "~/app/components/providers/LibraryProvider";
+import PaperTable from "./PaperTable";
 import {
   Tabs,
   TabsContent,
