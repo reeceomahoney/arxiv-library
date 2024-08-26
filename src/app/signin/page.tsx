@@ -24,16 +24,16 @@ export default function SignInPage() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-4">
-            <Button onClick={() => handleSignIn("google")} className="w-full">
-              <div className="flex items-center gap-2">
-                <Image src="/google.png" alt="Google" width={24} height={24} />
-                Sign in with Google
-              </div>
-            </Button>
             <Button onClick={() => handleSignIn("github")} className="w-full">
               <div className="flex items-center gap-2">
                 <Image src="/github.svg" alt="GitHub" width={24} height={24} />
                 Sign in with GitHub
+              </div>
+            </Button>
+            <Button onClick={() => handleSignIn("google")} className="w-full">
+              <div className="flex items-center gap-2">
+                <Image src="/google.png" alt="Google" width={24} height={24} />
+                Sign in with Google
               </div>
             </Button>
           </div>
