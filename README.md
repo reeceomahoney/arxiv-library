@@ -23,7 +23,7 @@
 - [x] Make move paper drag and drop
 - [x] Add paper focus tab
 - [x] Add landing page
-- [ ] Improve mobile UI
+- [x] Improve mobile UI
 - [ ] Style login page
 - [ ] Add search
 - [ ] Add confirmation dialog for delete folder
