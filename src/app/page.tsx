@@ -1,13 +1,13 @@
-import AccountDropdown from "~/app/components/account-dropdown";
-import { Explorer, SheetExplorer } from "~/app/components/explorer";
-import { LibraryProvider } from "~/app/components/library-provider";
-import { ModeToggle } from "~/app/components/mode-toggle";
-import PaperTabs from "~/app/components/paper-tabs";
+import AccountDropdown from "~/app/components/AccountDropdown";
+import { Explorer, SheetExplorer } from "~/app/components/Explorer";
+import { LibraryProvider } from "~/app/components/LibraryProvider";
+import { ModeToggle } from "~/app/components/ModeToggle";
+import PaperTabs from "~/app/components/PaperTabs";
 import { getServerAuthSession } from "~/server/auth";
 import { db } from "~/server/db";
 import LandingPage from "./components/LandingPage";
 import PaperSearch from "./components/PaperSearch";
-import { ThemeProvider } from "./components/theme-provider";
+import { ThemeProvider } from "./components/ThemeProvider";
 import Title from "./components/Title";
 
 async function fetchData(userId: string) {

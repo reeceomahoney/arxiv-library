@@ -3,7 +3,7 @@
 import { Plus } from "lucide-react";
 import React, { useState } from "react";
 import { createPaper } from "../../server/actions";
-import { useLibrary } from "./library-provider";
+import { useLibrary } from "./LibraryProvider";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 

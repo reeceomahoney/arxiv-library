@@ -13,13 +13,13 @@ import {
   TableHeader,
   TableRow,
 } from "~/app/components/ui/table";
-import AddPaper from "./add-paper";
-import DeletePaper from "./delete-paper";
+import AddPaper from "./AddPaper";
+import DeletePaper from "./DeletePaper";
 import { Checkbox } from "./ui/checkbox";
 
 import { collectPapers, getAuthorString } from "~/lib/utils";
 import type { Paper } from "~/server/db/schema";
-import { useLibrary } from "./library-provider";
+import { useLibrary } from "./LibraryProvider";
 
 function PaperDragLayer({ count }: { count: number }) {
   const { itemType, isDragging, clientOffset } = useDragLayer((monitor) => ({

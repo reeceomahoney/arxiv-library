@@ -4,7 +4,7 @@ import { Search } from "lucide-react";
 import React, { useEffect } from "react";
 
 import { Input } from "./ui/input";
-import { useLibrary } from "./library-provider";
+import { useLibrary } from "./LibraryProvider";
 
 export default function PaperSearch() {
   const { papers, setPapers } = useLibrary();
@@ -13,9 +13,9 @@ export default function PaperSearch() {
 
   useEffect(() => {
     if (query.length > 0) {
-    setPapers(allPapers.filter((paper) =>
-        paper.title?.toLowerCase().includes(query),
-    ));
+      setPapers(
+        allPapers.filter((paper) => paper.title?.toLowerCase().includes(query)),
+      );
     } else {
       setPapers(allPapers);
     }

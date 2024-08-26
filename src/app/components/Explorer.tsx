@@ -19,9 +19,9 @@ import {
 import { Input } from "~/app/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "~/app/components/ui/sheet";
 
-import AddFolder from "~/app/components/add-folder";
-import type { FolderUI } from "~/app/components/library-provider";
-import { useLibrary } from "~/app/components/library-provider";
+import AddFolder from "~/app/components/AddFolder";
+import type { FolderUI } from "~/app/components/LibraryProvider";
+import { useLibrary } from "~/app/components/LibraryProvider";
 import { DialogDescription, DialogTitle } from "~/app/components/ui/dialog";
 import { collectPapers, nestFolders } from "~/lib/utils";
 import {
