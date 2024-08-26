@@ -24,8 +24,8 @@
 - [x] Add paper focus tab
 - [x] Add landing page
 - [x] Improve mobile UI
-- [ ] Style login page
-- [ ] Add search
+- [x] Style login page
+- [x] Add search
 - [ ] Add confirmation dialog for delete folder
 - [ ] Move add folder into context menu
 - [ ] Improve explorer clicking behaviour
