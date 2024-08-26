@@ -2,14 +2,14 @@
 
 import { X } from "lucide-react";
 
-import { useLibrary } from "~/app/_components/library-provider";
-import PaperTable from "~/app/_components/paper-table";
+import { useLibrary } from "~/app/components/library-provider";
+import PaperTable from "~/app/components/paper-table";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "~/app/_components/ui/tabs";
+} from "~/app/components/ui/tabs";
 import { getAuthorString } from "~/lib/utils";
 
 export default function PaperTabs() {
@@ -39,7 +39,7 @@ export default function PaperTabs() {
       <TabsList className="w-full justify-start gap-1">
         <TabsTrigger
           value="my-library"
-          className="w-auto md:w-60 shrink data-[state=inactive]:hover:bg-gray-700"
+          className="w-auto shrink data-[state=inactive]:hover:bg-gray-700 md:w-60"
         >
           My Library
         </TabsTrigger>

@@ -3,7 +3,7 @@
 import { CircleUser } from "lucide-react";
 import { signOut } from "next-auth/react";
 
-import { Button } from "~/app/_components/ui/button";
+import { Button } from "~/app/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,7 +11,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "~/app/_components/ui/dropdown-menu";
+} from "~/app/components/ui/dropdown-menu";
 
 export default function AccountDropdown({ userName }: { userName: string }) {
   return (

@@ -1,9 +1,9 @@
 "use client";
 
 import { Plus } from "lucide-react";
-import { Button } from "~/app/_components/ui/button";
-import { Input } from "~/app/_components/ui/input";
-import { Label } from "~/app/_components/ui/label";
+import { Button } from "~/app/components/ui/button";
+import { Input } from "~/app/components/ui/input";
+import { Label } from "~/app/components/ui/label";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogClose,
-} from "~/app/_components/ui/dialog";
+} from "~/app/components/ui/dialog";
 import { createFolder } from "~/server/actions";
 import { useLibrary, type FolderUI } from "./library-provider";
 

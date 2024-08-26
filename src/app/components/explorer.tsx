@@ -9,20 +9,20 @@ import {
 import React, { useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
 
-import { Button } from "~/app/_components/ui/button";
+import { Button } from "~/app/components/ui/button";
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
-} from "~/app/_components/ui/context-menu";
-import { Input } from "~/app/_components/ui/input";
-import { Sheet, SheetContent, SheetTrigger } from "~/app/_components/ui/sheet";
+} from "~/app/components/ui/context-menu";
+import { Input } from "~/app/components/ui/input";
+import { Sheet, SheetContent, SheetTrigger } from "~/app/components/ui/sheet";
 
-import AddFolder from "~/app/_components/add-folder";
-import type { FolderUI } from "~/app/_components/library-provider";
-import { useLibrary } from "~/app/_components/library-provider";
-import { DialogDescription, DialogTitle } from "~/app/_components/ui/dialog";
+import AddFolder from "~/app/components/add-folder";
+import type { FolderUI } from "~/app/components/library-provider";
+import { useLibrary } from "~/app/components/library-provider";
+import { DialogDescription, DialogTitle } from "~/app/components/ui/dialog";
 import { collectPapers, nestFolders } from "~/lib/utils";
 import {
   deleteFolders,

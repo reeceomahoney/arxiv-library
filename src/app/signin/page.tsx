@@ -3,13 +3,13 @@
 import Image from "next/image";
 import { signIn } from "next-auth/react";
 
-import { Button } from "~/app/_components/ui/button";
+import { Button } from "~/app/components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "~/app/_components/ui/card";
+} from "~/app/components/ui/card";
 
 export default function SignInPage() {
   const handleSignIn = async (provider: string) => {

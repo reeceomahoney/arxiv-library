@@ -1,13 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { Button } from "~/app/_components/ui/button";
+import { Button } from "~/app/components/ui/button";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "~/app/_components/ui/card";
+} from "~/app/components/ui/card";
 
 const Header = () => {
   return (

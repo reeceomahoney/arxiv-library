@@ -9,8 +9,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "~/app/_components/ui/alert-dialog";
-import { Button } from "~/app/_components/ui/button";
+} from "~/app/components/ui/alert-dialog";
+import { Button } from "~/app/components/ui/button";
 import { deletePapers } from "~/server/actions";
 import { type Paper } from "~/server/db/schema";
 

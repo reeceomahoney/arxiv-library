@@ -12,7 +12,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "~/app/_components/ui/table";
+} from "~/app/components/ui/table";
 import AddPaper from "./add-paper";
 import DeletePaper from "./delete-paper";
 import { Checkbox } from "./ui/checkbox";
