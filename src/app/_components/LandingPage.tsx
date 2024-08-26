@@ -14,12 +14,7 @@ const Header = () => {
     <header className="bg-white shadow-md">
       <div className="container mx-auto flex items-center justify-between py-4">
         <div className="flex items-center gap-2">
-          <Image
-            src="/apple-touch-icon.png"
-            alt="Arxiv Library"
-            width={24}
-            height={24}
-          />
+          <Image src="/logo.png" alt="Arxiv Library" width={24} height={24} />
           <h1 className="text-2xl font-bold">Arxiv Library</h1>
         </div>
         <Button>
