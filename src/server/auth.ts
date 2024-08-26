@@ -12,37 +12,18 @@ import { env } from "~/env";
 import { db } from "~/server/db";
 import {
   accounts,
+  folders,
   sessions,
   users,
   verificationTokens,
 } from "~/server/db/schema";
 
-/**
- * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
- * object and keep type safety.
- *
- * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
- */
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: {
-      id: string;
-      // ...other properties
-      // role: UserRole;
-    } & DefaultSession["user"];
+    user: { id: string } & DefaultSession["user"];
   }
-
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
 }
 
-/**
- * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
- *
- * @see https://next-auth.js.org/configuration/options
- */
 export const authOptions: NextAuthOptions = {
   callbacks: {
     session: ({ session, user }) => ({
@@ -52,6 +33,20 @@ export const authOptions: NextAuthOptions = {
         id: user.id,
       },
     }),
+    // Create the "all papers" folder if it doesn't exist
+    async signIn({ user }) {
+      const existingFolder = await db.query.folders.findFirst({
+        where: (folders, { eq }) => eq(folders.createdById, user.id),
+      });
+
+      if (!existingFolder) {
+        await db
+          .insert(folders)
+          .values({ name: "All Papers", createdById: user.id });
+      }
+
+      return true;
+    },
   },
   adapter: DrizzleAdapter(db, {
     usersTable: users,
@@ -71,9 +66,4 @@ export const authOptions: NextAuthOptions = {
   ],
 };
 
-/**
- * Wrapper for `getServerSession` so that you don't need to import the `authOptions` in every file.
- *
- * @see https://next-auth.js.org/configuration/nextjs
- */
 export const getServerAuthSession = () => getServerSession(authOptions);
