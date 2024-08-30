@@ -36,3 +36,6 @@
 - [ ] Improve folder and paper drag and drop behaviour
 - [ ] Add tab drag to reorder
 - [ ] Fix light mode colors
+- [ ] Add read/unread tag
+- [ ] Clear add paper after submit
+- [ ] add newsletter opt out
