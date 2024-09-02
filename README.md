@@ -1,31 +1,5 @@
 # TODO
 
-- [x] Add schemas to db
-- [x] Write seed script
-- [x] Add auth
-- [x] Plug data into the front end
-- [x] Fix typing in context provider
-- [x] Update UI to match new provider
-- [x] Fix dark mode
-- [x] Change font to inter
-- [x] Fix create folder action
-- [x] Create add paper action from arxiv api
-- [x] Style add paper form
-- [x] Update paper schema to fit arxiv api
-- [x] Style paper table
-- [x] Add nextauth secret
-- [x] Host
-- [x] Add tick box paper delete
-- [x] Add tick box paper move
-- [x] Add rename folder
-- [x] Add delete folder
-- [x] Add move folder
-- [x] Make move paper drag and drop
-- [x] Add paper focus tab
-- [x] Add landing page
-- [x] Improve mobile UI
-- [x] Style login page
-- [x] Add search
 - [ ] Add import papers
 - [ ] Add export bibtex
 - [ ] Add confirmation dialog for delete folder
@@ -39,3 +13,6 @@
 - [ ] Add read/unread tag
 - [ ] Clear add paper after submit
 - [ ] add newsletter opt out
+- [ ] save tab and folder state to local store
+- [ ] get citation count on add
+- [ ] get bibtex on add
