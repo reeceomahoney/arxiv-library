@@ -16,3 +16,4 @@
 - [ ] save tab and folder state to local store
 - [ ] get citation count on add
 - [ ] get bibtex on add
+- [ ] Make browser extension
