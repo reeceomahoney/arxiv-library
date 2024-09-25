@@ -1,5 +1,6 @@
 # TODO
 
+- [x] Clear add paper after submit
 - [ ] Add import papers
 - [ ] Add export bibtex
 - [ ] Add confirmation dialog for delete folder
@@ -11,7 +12,6 @@
 - [ ] Add tab drag to reorder
 - [ ] Fix light mode colors
 - [ ] Add read/unread tag
-- [ ] Clear add paper after submit
 - [ ] add newsletter opt out
 - [ ] save tab and folder state to local store
 - [ ] get citation count on add

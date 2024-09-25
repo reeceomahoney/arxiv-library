@@ -1,4 +1,4 @@
-"use cleint";
+"use client";
 
 import { Plus } from "lucide-react";
 import React, { useState } from "react";
@@ -18,6 +18,7 @@ export default function AddPaper() {
     const data = await createPaper(arxivIdOrLink, selectedFolder!.id);
     if (!data) return;
     setPapers((prevPapers) => [...prevPapers, data]);
+    setArxivIdOrLink("");
   };
 
   return (
