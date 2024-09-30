@@ -19,3 +19,4 @@
 - [ ] Make browser extension
 - [ ] add better loading state
 - [ ] Fix double paper bug
+- [ ] switch folder on delete
