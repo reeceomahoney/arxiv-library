@@ -7,7 +7,7 @@ import {
   Menu,
 } from "lucide-react";
 import React, { useRef } from "react";
-import { useDrag, useDrop, } from "react-dnd";
+import { useDrag, useDrop } from "react-dnd";
 
 import { Button } from "~/app/components/ui/button";
 import {
@@ -49,7 +49,10 @@ function FolderContextMenu({
         <ContextMenuItem onClick={() => setFolderRenaming(folder.id, true)}>
           Rename
         </ContextMenuItem>
-        <ContextMenuItem onClick={() => deleteFolders([folder.id])}> Delete</ContextMenuItem>
+        <ContextMenuItem onClick={() => deleteFolders([folder.id])}>
+          {" "}
+          Delete
+        </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
   );
@@ -170,29 +173,35 @@ function FolderContent({ folder, depth }: { folder: FolderUI; depth: number }) {
 
 export function Explorer() {
   const folders = useLibraryContext((state) => state.folders);
+  const isHydrated = useLibraryContext((state) => state.isHydrated);
 
-  const renderFolders = (folders: FolderUI[], depth = 0) => (
-    <ul className="list-none">
-      {folders.map((folder) => {
-        return (
-          <li key={folder.id}>
-            <FolderContextMenu folder={folder}>
-              <div
-                className={`cursor-pointer text-muted-foreground hover:bg-muted ${
-                  folder.isSelected ? "bg-muted" : ""
-                }`}
-              >
-                <FolderContent folder={folder} depth={depth} />
-              </div>
-            </FolderContextMenu>
-            {folder.isOpen && folder.folders && (
-              <>{renderFolders(folder.folders, depth + 1)}</>
-            )}
-          </li>
-        );
-      })}
-    </ul>
-  );
+  const renderFolders = (folders: FolderUI[], depth = 0) => {
+    if (!isHydrated) {
+      return <div>Loading...</div>;
+    }
+    return (
+      <ul className="list-none">
+        {folders.map((folder) => {
+          return (
+            <li key={folder.id}>
+              <FolderContextMenu folder={folder}>
+                <div
+                  className={`cursor-pointer text-muted-foreground hover:bg-muted ${
+                    folder.isSelected ? "bg-muted" : ""
+                  }`}
+                >
+                  <FolderContent folder={folder} depth={depth} />
+                </div>
+              </FolderContextMenu>
+              {folder.isOpen && folder.folders && (
+                <>{renderFolders(folder.folders, depth + 1)}</>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    );
+  };
 
   return (
     <div className="flex-1">
