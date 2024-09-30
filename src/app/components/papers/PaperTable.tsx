@@ -126,11 +126,7 @@ export default function PaperTable() {
         <h1 className="text-lg font-semibold md:text-2xl">{title}</h1>
         <div className="mt-4 flex w-full items-center gap-4 md:mt-0 md:w-auto">
           <AddPaper />
-          <DeletePaper
-            selectedPapers={selectedPapers}
-            setSelectedPapers={setSelectedPapers}
-            setPapers={setPapers}
-          />
+          <DeletePaper />
         </div>
       </div>
       {filteredPapers.length > 0 ? (
