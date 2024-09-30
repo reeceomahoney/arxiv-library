@@ -2,7 +2,7 @@
 
 import type { Folder, Paper } from "~/server/db/schema";
 import { createContext, useContext, useRef } from "react";
-import { createStore, useStore } from "zustand";
+import { create, useStore } from "zustand";
 import { persist } from "zustand/middleware";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -62,7 +62,7 @@ const createLibraryStore = (initProps?: Partial<LibraryProps>) => {
     isSelected: folder.name === "All Papers",
   }));
 
-  return createStore<LibraryState>(
+  return create<LibraryState>(
     persist(
       (set, get) => ({
         ...DEFAULT_PROPS,
