@@ -55,21 +55,11 @@ const createLibraryStore = (initProps?: Partial<LibraryProps>) => {
     papers: [],
   };
 
-  // Set "All Papers" folder as selected by default
-  const initialFolders = initProps?.folders ?? DEFAULT_PROPS.folders;
-  const foldersWithAllPapersSelected = initialFolders.map((folder) => ({
-    ...folder,
-    isOpen: false,
-    isSelected: folder.name === "All Papers",
-    isRenaming: false,
-  } as FolderUI));
-
   return create<LibraryState>()(
     persist(
       (set, get) => ({
         ...DEFAULT_PROPS,
         ...initProps,
-        folders: foldersWithAllPapersSelected,
         selectedPapers: [],
         openPapers: [],
         activeTab: "my-library",
