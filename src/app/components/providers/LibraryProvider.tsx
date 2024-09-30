@@ -62,7 +62,7 @@ const createLibraryStore = (initProps?: Partial<LibraryProps>) => {
     isSelected: folder.name === "All Papers",
   }));
 
-  return create<LibraryState>(
+  return create<LibraryState>()(
     persist(
       (set, get) => ({
         ...DEFAULT_PROPS,
