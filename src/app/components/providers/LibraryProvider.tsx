@@ -62,7 +62,7 @@ const createLibraryStore = (initProps?: Partial<LibraryProps>) => {
     isOpen: false,
     isSelected: folder.name === "All Papers",
     isRenaming: false,
-  }));
+  } as FolderUI));
 
   return create<LibraryState>()(
     persist(
