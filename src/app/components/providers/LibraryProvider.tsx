@@ -54,9 +54,9 @@ const createLibraryStore = (initProps?: Partial<LibraryProps>) => {
 
   // Set "All Papers" folder as selected by default
   const initialFolders = initProps?.folders ?? DEFAULT_PROPS.folders;
-  const foldersWithAllPapersSelected = initialFolders.map(folder => ({
+  const foldersWithAllPapersSelected = initialFolders.map((folder) => ({
     ...folder,
-    isSelected: folder.name === "All Papers"
+    isSelected: folder.name === "All Papers",
   }));
 
   return createStore<LibraryState>((set, get) => ({
@@ -69,7 +69,10 @@ const createLibraryStore = (initProps?: Partial<LibraryProps>) => {
     setFolders: (folders) => set({ folders }),
     addFolders: (folders) => set({ folders: folders.concat(folders) }),
     setPapers: (papers) => set({ papers }),
-    addPapers: (papers) => set({ papers: papers.concat(papers) }),
+    addPapers: (papers) =>
+      set((state) => ({
+        papers: state.papers.concat(papers),
+      })),
     setSelectedPapers: (selectedPapers) => set({ selectedPapers }),
     addSelectedPaper: (paperId) =>
       set((state) => ({

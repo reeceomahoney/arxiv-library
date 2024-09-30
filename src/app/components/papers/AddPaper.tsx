@@ -18,7 +18,7 @@ export default function AddPaper() {
     event.preventDefault();
     const data = await createPaper(arxivIdOrLink, selectedFolder!.id);
     if (!data) return;
-    addPapers(data);
+    addPapers([data]);
     setArxivIdOrLink("");
   };
 
