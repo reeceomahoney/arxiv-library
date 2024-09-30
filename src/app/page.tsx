@@ -23,12 +23,12 @@ async function fetchData(userId: string) {
   });
 
   // Set "All Papers" folder as selected by default
-  const folderUIData: FolderUI[] = folderData.map((folder) => ({
+  const folderUIData = folderData.map((folder) => ({
     ...folder,
     isOpen: true,
     isSelected: folder.name === "All Papers",
     isRenaming: false,
-  }));
+  })) as FolderUI[];
 
   return { folderUIData, paperData };
 }
