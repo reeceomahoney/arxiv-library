@@ -1,17 +1,10 @@
 "use client";
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  type Dispatch,
-  type ReactNode,
-  type SetStateAction,
-} from "react";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-
 import type { Folder, Paper } from "~/server/db/schema";
+import { createContext, useContext, useRef } from "react";
+import { createStore, useStore } from "zustand";
+
+import { moveFolder, movePapers, deleteFolders } from "~/server/actions";
 
 // Extend the Folder type to include UI state
 export type FolderUI = Folder & {
@@ -21,115 +14,147 @@ export type FolderUI = Folder & {
   folders: FolderUI[];
 };
 
-// Define the context type
-type LibraryContextType = {
+interface LibraryProps {
   folders: FolderUI[];
-  setFolders: Dispatch<SetStateAction<FolderUI[]>>;
   papers: Paper[];
+}
+
+interface LibraryState extends LibraryProps {
   selectedPapers: number[];
-  setSelectedPapers: Dispatch<SetStateAction<number[]>>;
-  setPapers: Dispatch<SetStateAction<Paper[]>>;
+  openPapers: Paper[];
+  activeTab: string;
+  setFolders: (folders: FolderUI[]) => void;
+  addFolders: (folders: FolderUI[]) => void;
+  setPapers: (papers: Paper[]) => void;
+  addPapers: (papers: Paper[]) => void;
+  setSelectedPapers: (selectedPapers: number[]) => void;
+  addSelectedPaper: (paperId: number) => void;
+  setOpenPapers: (openPapers: Paper[]) => void;
+  addOpenPaper: (paper: Paper) => void;
+  setActiveTab: (activeTab: string) => void;
   toggleFolderOpen: (id: number) => void;
   selectFolder: (id: number) => void;
   setFolderRenaming: (folderId: number, isRenaming: boolean) => void;
   setFolderName: (folderId: number, name: string) => void;
-  openPapers: Paper[];
-  setOpenPapers: Dispatch<SetStateAction<Paper[]>>;
-  activeTab: string;
-  setActiveTab: Dispatch<SetStateAction<string>>;
+  deleteFolders: (folderIds: number[]) => Promise<void>;
+  moveFolder: (itemId: number, folderId: number) => Promise<void>;
+  dragPapers: (itemId: number, folderId: number) => Promise<void>;
+}
+
+type LibraryStore = ReturnType<typeof createLibraryStore>;
+type LibraryProviderProps = React.PropsWithChildren<LibraryProps>;
+
+const createLibraryStore = (initProps?: Partial<LibraryProps>) => {
+  const DEFAULT_PROPS: LibraryProps = {
+    folders: [],
+    papers: [],
+  };
+  return createStore<LibraryState>((set, get) => ({
+    ...DEFAULT_PROPS,
+    ...initProps,
+    selectedPapers: [],
+    openPapers: [],
+    activeTab: "my-library",
+    setFolders: (folders) => set({ folders }),
+    addFolders: (folders) => set({ folders: folders.concat(folders) }),
+    setPapers: (papers) => set({ papers }),
+    addPapers: (papers) => set({ papers: papers.concat(papers) }),
+    setSelectedPapers: (selectedPapers) => set({ selectedPapers }),
+    addSelectedPaper: (paperId) =>
+      set((state) => ({
+        selectedPapers: state.selectedPapers.includes(paperId)
+          ? state.selectedPapers.filter((id) => id !== paper)
+          : [...state.selectedPapers, paper],
+      })),
+    setOpenPapers: (openPapers) => set({ openPapers }),
+    addOpenPaper: (paper) =>
+      set((state) => ({
+        openPapers: state.openPapers.includes(paper)
+          ? state.openPapers
+          : [...state.openPapers, paper],
+      })),
+    setActiveTab: (activeTab) => set({ activeTab }),
+    toggleFolderOpen: (id) =>
+      set((state) => ({
+        folders: state.folders.map((folder) =>
+          folder.id === id ? { ...folder, isOpen: !folder.isOpen } : folder,
+        ),
+      })),
+    selectFolder: (id) =>
+      set((state) => ({
+        folders: state.folders.map((folder) =>
+          folder.id === id
+            ? { ...folder, isSelected: true }
+            : { ...folder, isSelected: false },
+        ),
+      })),
+    setFolderRenaming: (folderId, isRenaming) =>
+      set((state) => ({
+        folders: state.folders.map((folder) =>
+          folder.id === folderId ? { ...folder, isRenaming } : folder,
+        ),
+      })),
+    setFolderName: (folderId, name) =>
+      set((state) => ({
+        folders: state.folders.map((folder) =>
+          folder.id === folderId ? { ...folder, name } : folder,
+        ),
+      })),
+    deleteFolders: async (folderIds) => {
+      await deleteFolders(folderIds);
+      set((state) => ({
+        folders: state.folders.filter(
+          (folder) =>
+            !folderIds.includes(folder.id) &&
+            !folderIds.includes(folder.parentFolderId),
+        ),
+      }));
+    },
+    moveFolder: async (itemId, folderId) => {
+      if (itemId === folderId) return;
+      await moveFolder(itemId, folderId);
+      set((state) => ({
+        folders: state.folders.map((folder) =>
+          folder.id === itemId
+            ? { ...folder, parentFolderId: folderId }
+            : folder,
+        ),
+      }));
+    },
+    dragPapers: async (itemId, folderId) => {
+      // Add the current paper to selected papers if it's not already there
+      const draggedPapers = get().selectedPapers.includes(itemId)
+        ? get().selectedPapers
+        : [...get().selectedPapers, itemId];
+
+      await movePapers(itemId, folderId);
+      set((state) => ({
+        papers: state.papers.map((paper) =>
+          draggedPapers.includes(paper.id)
+            ? { ...paper, folderId: folderId }
+            : paper,
+        ),
+      }));
+    },
+  }));
 };
 
-const LibraryContext = createContext<LibraryContextType | undefined>(undefined);
+const LibraryContext = createContext<LibraryStore | null>(null);
 
-// Define the provider
-type LibraryProviderProps = {
-  children: ReactNode;
-  initialFolders: Folder[];
-  initialPapers: Paper[];
-};
-
-export const LibraryProvider: React.FC<LibraryProviderProps> = ({
-  children,
-  initialFolders,
-  initialPapers,
-}) => {
-  const [folders, setFolders] = useState<FolderUI[]>(
-    initialFolders.map((folder) => ({
-      ...folder,
-      isOpen: false,
-      isSelected: folder.name === "All Papers",
-      isRenaming: false,
-      folders: [],
-    })),
-  );
-  const [papers, setPapers] = useState<Paper[]>(initialPapers);
-  const [selectedPapers, setSelectedPapers] = useState<number[]>([]);
-  const [openPapers, setOpenPapers] = useState<Paper[]>([]);
-  const [activeTab, setActiveTab] = useState("my-library");
-
-  const toggleFolderOpen = (id: number) => {
-    setFolders((prevFolders) =>
-      prevFolders.map((folder) =>
-        folder.id === id ? { ...folder, isOpen: !folder.isOpen } : folder,
-      ),
-    );
-  };
-
-  const selectFolder = (id: number) => {
-    setFolders((prevFolders) =>
-      prevFolders.map((folder) =>
-        folder.id === id
-          ? { ...folder, isSelected: true }
-          : { ...folder, isSelected: false },
-      ),
-    );
-  };
-
-  const setFolderRenaming = (folderId: number, isRenaming: boolean) => {
-    setFolders((prevFolders) =>
-      prevFolders.map((folder) =>
-        folder.id === folderId ? { ...folder, isRenaming } : folder,
-      ),
-    );
-  };
-
-  const setFolderName = (folderId: number, name: string) => {
-    setFolders((prevFolders) =>
-      prevFolders.map((folder) =>
-        folder.id === folderId ? { ...folder, name } : folder,
-      ),
-    );
-  };
-
+export function LibraryProvider({ children, ...props }: LibraryProviderProps) {
+  const storeRef = useRef<LibraryStore>();
+  if (!storeRef.current) {
+    storeRef.current = createLibraryStore(props);
+  }
   return (
-    <LibraryContext.Provider
-      value={{
-        folders,
-        setFolders,
-        papers,
-        setPapers,
-        selectedPapers,
-        setSelectedPapers,
-        toggleFolderOpen,
-        selectFolder,
-        setFolderRenaming,
-        setFolderName,
-        openPapers,
-        setOpenPapers,
-        activeTab,
-        setActiveTab,
-      }}
-    >
-      <DndProvider backend={HTML5Backend}>{children}</DndProvider>
+    <LibraryContext.Provider value={storeRef.current}>
+      {children}
     </LibraryContext.Provider>
   );
-};
+}
 
-// Define the hook
-export const useLibrary = () => {
-  const context = useContext(LibraryContext);
-  if (!context) {
-    throw new Error("useLibrary must be used within a LibraryProvider");
-  }
-  return context;
-};
+export function useLibraryContext<T>(selector: (state: LibraryState) => T): T {
+  const store = useContext(LibraryContext);
+  if (!store) throw new Error("Missing BearContext.Provider in the tree");
+  return useStore(store, selector);
+}

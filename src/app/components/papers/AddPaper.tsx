@@ -3,12 +3,13 @@
 import { Plus } from "lucide-react";
 import React, { useState } from "react";
 import { createPaper } from "../../../server/actions";
-import { useLibrary } from "../providers/LibraryProvider";
+import { useLibraryContext } from "../providers/LibraryProvider";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 
 export default function AddPaper() {
-  const { folders, setPapers } = useLibrary();
+  const folders = useLibraryContext((state) => state.folders);
+  const addPapers = useLibraryContext((state) => state.addPapers);
   const [arxivIdOrLink, setArxivIdOrLink] = useState("");
 
   const selectedFolder = folders.find((folder) => folder.isSelected);
@@ -17,7 +18,7 @@ export default function AddPaper() {
     event.preventDefault();
     const data = await createPaper(arxivIdOrLink, selectedFolder!.id);
     if (!data) return;
-    setPapers((prevPapers) => [...prevPapers, data]);
+    addPapers(data);
     setArxivIdOrLink("");
   };
 

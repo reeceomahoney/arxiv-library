@@ -2,8 +2,8 @@
 
 import { File, Files } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { useDrag, useDragLayer } from "react-dnd";
-import { getEmptyImage } from "react-dnd-html5-backend";
+import { useDrag, useDragLayer, DndProvider } from "react-dnd";
+import { getEmptyImage, HTML5Backend } from "react-dnd-html5-backend";
 
 import {
   Table,
@@ -19,7 +19,7 @@ import { Checkbox } from "../ui/checkbox";
 
 import { collectPapers, getAuthorString } from "~/lib/utils";
 import type { Paper } from "~/server/db/schema";
-import { useLibrary } from "../providers/LibraryProvider";
+import { useLibraryContext } from "../providers/LibraryProvider";
 
 function PaperDragLayer({ count }: { count: number }) {
   const { itemType, isDragging, clientOffset } = useDragLayer((monitor) => ({
@@ -50,13 +50,13 @@ function PaperRow({
   isSelected: boolean;
   handleSelectPaper: (id: number) => void;
 }) {
-  const { setOpenPapers, setActiveTab } = useLibrary();
+  const addOpenPaper = useLibraryContext((state) => state.addOpenPaper);
+  const setActiveTab = useLibraryContext((state) => state.setActiveTab);
+
   const ref = useRef(null);
 
   const handleOpenPaper = () => {
-    setOpenPapers((prevPapers) => {
-      return prevPapers.includes(paper) ? prevPapers : [...prevPapers, paper];
-    });
+    addOpenPaper(paper);
     setActiveTab(String(paper.id));
   };
 
@@ -95,8 +95,13 @@ function PaperRow({
 }
 
 export default function PaperTable() {
-  const { folders, papers, setPapers, selectedPapers, setSelectedPapers } =
-    useLibrary();
+  const folders = useLibraryContext((state) => state.folders);
+  const papers = useLibraryContext((state) => state.papers);
+  const setPapers = useLibraryContext((state) => state.setPapers);
+  const selectedPapers = useLibraryContext((state) => state.selectedPapers);
+  const setSelectedPapers = useLibraryContext((state) => state.setSelectedPapers);
+  const addSelectedPaper = useLibraryContext((state) => state.addSelectedPaper);
+
   const selectedFolder = folders.find((folder) => folder.isSelected);
   const title = selectedFolder?.name;
 
@@ -112,16 +117,8 @@ export default function PaperTable() {
     }
   };
 
-  const handleSelectPaper = (paperId: number) => {
-    setSelectedPapers((prevSelected) =>
-      prevSelected.includes(paperId)
-        ? prevSelected.filter((id) => id !== paperId)
-        : [...prevSelected, paperId],
-    );
-  };
-
   return (
-    <>
+    <DndProvider backend={HTML5Backend}>
       <PaperDragLayer count={selectedPapers.length} />
       <div className="flex flex-col items-start justify-between py-4 md:flex-row md:items-center">
         <h1 className="text-lg font-semibold md:text-2xl">{title}</h1>
@@ -158,7 +155,7 @@ export default function PaperTable() {
                 key={paper.id}
                 paper={paper}
                 isSelected={selectedPapers.includes(paper.id)}
-                handleSelectPaper={handleSelectPaper}
+                handleSelectPaper={addSelectedPaper}
               />
             ))}
           </TableBody>
@@ -166,6 +163,6 @@ export default function PaperTable() {
       ) : (
         <p>No papers</p>
       )}
-    </>
+    </DndProvider>
   );
 }

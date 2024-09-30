@@ -2,7 +2,7 @@
 
 import { X } from "lucide-react";
 
-import { useLibrary } from "~/app/components/providers/LibraryProvider";
+import { useLibraryContext } from "~/app/components/providers/LibraryProvider";
 import PaperTable from "./PaperTable";
 import {
   Tabs,
@@ -13,20 +13,21 @@ import {
 import { getAuthorString } from "~/lib/utils";
 
 export default function PaperTabs() {
-  const { openPapers, setOpenPapers, activeTab, setActiveTab } = useLibrary();
+  const openPapers = useLibraryContext((state) => state.openPapers);
+  const setOpenPapers = useLibraryContext((state) => state.setOpenPapers);
+  const activeTab = useLibraryContext((state) => state.activeTab);
+  const setActiveTab = useLibraryContext((state) => state.setActiveTab);
 
   const handleClosePaper = (id: number) => {
-    setOpenPapers((prevPapers) => {
-      const newPapers = prevPapers.filter((p) => p.id !== id);
-      if (newPapers.length > 0) {
-        if (activeTab === String(id)) {
-          setActiveTab(String(newPapers[newPapers.length - 1]!.id));
-        }
-      } else {
-        setActiveTab("my-library");
+    const newPapers = openPapers.filter((p) => p.id !== id);
+    if (newPapers.length > 0) {
+      if (activeTab === String(id)) {
+        setActiveTab(String(newPapers[newPapers.length - 1]!.id));
       }
-      return newPapers;
-    });
+    } else {
+      setActiveTab("my-library");
+    }
+    setOpenPapers(newPapers);
   };
 
   return (

@@ -1,15 +1,17 @@
 "use client";
 
 import { Search } from "lucide-react";
-import React, { useEffect } from "react";
+import { useState, useEffect } from "react";
 
 import { Input } from "../ui/input";
-import { useLibrary } from "../providers/LibraryProvider";
+import { useLibraryContext } from "../providers/LibraryProvider";
 
 export default function PaperSearch() {
-  const { papers, setPapers } = useLibrary();
-  const [query, setQuery] = React.useState("");
-  const [allPapers] = React.useState(papers);
+  const papers = useLibraryContext((state) => state.papers);
+  const setPapers = useLibraryContext((state) => state.setPapers);
+
+  const [query, setQuery] = useState("");
+  const [allPapers] = useState(papers);
 
   useEffect(() => {
     if (query.length > 0) {

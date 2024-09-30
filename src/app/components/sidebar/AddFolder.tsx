@@ -15,12 +15,14 @@ import {
 } from "~/app/components/ui/dialog";
 import { createFolder } from "~/server/actions";
 import {
-  useLibrary,
+  useLibraryContext,
   type FolderUI,
 } from "~/app/components/providers/LibraryProvider";
 
 export default function AddFolder() {
-  const { folders, setFolders } = useLibrary();
+  const folders = useLibraryContext((state) => state.folders);
+  const addFolders = useLibraryContext((state) => state.addFolders);
+
   const selectedFolder = folders.find((folder) => folder.isSelected);
 
   if (!selectedFolder) {
@@ -40,7 +42,7 @@ export default function AddFolder() {
     } as FolderUI;
 
     // Router refresh wasn't working, so just adding to state
-    setFolders((prevFolders) => [...prevFolders, newFolderUI]);
+    addFolders([newFolderUI]);
   };
 
   return (

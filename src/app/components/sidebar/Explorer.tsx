@@ -7,7 +7,8 @@ import {
   Menu,
 } from "lucide-react";
 import React, { useRef } from "react";
-import { useDrag, useDrop } from "react-dnd";
+import { useDrag, useDrop, DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 import { Button } from "~/app/components/ui/button";
 import {
@@ -21,15 +22,10 @@ import { Sheet, SheetContent, SheetTrigger } from "~/app/components/ui/sheet";
 
 import AddFolder from "./AddFolder";
 import type { FolderUI } from "~/app/components/providers/LibraryProvider";
-import { useLibrary } from "~/app/components/providers/LibraryProvider";
+import { useLibraryContext } from "~/app/components/providers/LibraryProvider";
 import { DialogDescription, DialogTitle } from "~/app/components/ui/dialog";
 import { collectPapers, nestFolders } from "~/lib/utils";
-import {
-  deleteFolders,
-  moveFolder,
-  movePapers,
-  renameFolder,
-} from "~/server/actions";
+import { renameFolder } from "~/server/actions";
 
 function FolderContextMenu({
   children,
@@ -38,20 +34,12 @@ function FolderContextMenu({
   children: React.ReactNode;
   folder: FolderUI;
 }) {
-  const { setFolders, setFolderRenaming } = useLibrary();
+  const setFolderRenaming = useLibraryContext((state) => state.setFolderRenaming);
+  const deleteFolders = useLibraryContext((state) => state.deleteFolders);
 
   if (folder.name === "All Papers") {
     return <div onContextMenu={(e) => e.preventDefault()}>{children}</div>;
   }
-
-  const handleDeleteFolders = async () => {
-    await deleteFolders([folder.id]);
-    setFolders((prevFolders) =>
-      prevFolders.filter(
-        (f) => f.id !== folder.id && f.parentFolderId !== folder.id,
-      ),
-    );
-  };
 
   return (
     <ContextMenu>
@@ -60,14 +48,14 @@ function FolderContextMenu({
         <ContextMenuItem onClick={() => setFolderRenaming(folder.id, true)}>
           Rename
         </ContextMenuItem>
-        <ContextMenuItem onClick={handleDeleteFolders}>Delete</ContextMenuItem>
+        <ContextMenuItem onClick={deleteFolders([folder.id])}>Delete</ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
   );
 }
 
 function FolderChevron({ folder }: { folder: FolderUI }) {
-  const { toggleFolderOpen } = useLibrary();
+  const toggleFolderOpen = useLibraryContext((state) => state.toggleFolderOpen);
   return folder.folders && folder.folders.length > 0 ? (
     folder.isOpen ? (
       <ChevronDown
@@ -88,16 +76,14 @@ function FolderChevron({ folder }: { folder: FolderUI }) {
 // BUG: Submitting on blur doesn't work as it gets triggered instantly so a form submit is needed
 // BUG: autofocus doesn't work
 function FolderContent({ folder, depth }: { folder: FolderUI; depth: number }) {
-  const {
-    selectFolder,
-    setFolderRenaming,
-    setFolderName,
-    setFolders,
-    folders,
-    papers,
-    setSelectedPapers,
-    setPapers,
-  } = useLibrary();
+  const selectFolder = useLibraryContext((state) => state.selectFolder);
+  const setFolderRenaming = useLibraryContext((state) => state.setFolderRenaming);
+  const setFolderName = useLibraryContext((state) => state.setFolderName);
+  const moveFolder = useLibraryContext((state) => state.moveFolder);
+  const folders = useLibraryContext((state) => state.folders);
+  const papers = useLibraryContext((state) => state.papers);
+  const dragPapers = useLibraryContext((state) => state.dragPapers);
+
   const ref = useRef(null);
 
   const [{ isDragging }, drag] = useDrag(() => ({
@@ -113,9 +99,9 @@ function FolderContent({ folder, depth }: { folder: FolderUI; depth: number }) {
     drop: async (item: { id: number }, monitor) => {
       // Folder drop
       if (monitor.getItemType() === "FOLDER") {
-        await handleMoveFolder(item.id, folder.id);
+        await moveFolder(item.id, folder.id);
       } else if (monitor.getItemType() === "PAPER") {
-        await handleMovePapers(item.id, folder.id);
+        await dragPapers(item.id, folder.id);
       }
     },
     collect: (monitor) => ({
@@ -123,41 +109,6 @@ function FolderContent({ folder, depth }: { folder: FolderUI; depth: number }) {
       isOverPaper: monitor.isOver(),
     }),
   }));
-
-  const handleMoveFolder = async (itemId: number, folderId: number) => {
-    if (itemId === folderId) return;
-
-    await moveFolder(itemId, folderId);
-    setFolders((prevFolders) =>
-      prevFolders.map((f) =>
-        f.id === itemId ? { ...f, parentFolderId: folderId } : f,
-      ),
-    );
-  };
-
-  // We've had to use the functional state update to get the latest selected papers
-  const handleMovePapers = async (itemId: number, folderId: number) => {
-    setSelectedPapers((prevSelectedPapers) => {
-      // Add the current paper to selected papers if it's not already there
-      const draggedPapers = prevSelectedPapers.includes(itemId)
-        ? prevSelectedPapers
-        : [...prevSelectedPapers, itemId];
-
-      movePapers(draggedPapers, folderId)
-        .then(() => {
-          setPapers((prevPapers) =>
-            prevPapers.map((paper) =>
-              draggedPapers.includes(paper.id)
-                ? { ...paper, folderId: folderId }
-                : paper,
-            ),
-          );
-        })
-        .catch((error) => console.error(error));
-
-      return [];
-    });
-  };
 
   const handleRenameSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -215,7 +166,7 @@ function FolderContent({ folder, depth }: { folder: FolderUI; depth: number }) {
 }
 
 export function Explorer() {
-  const { folders } = useLibrary();
+  const folders = useLibraryContext((state) => state.folders);
 
   const renderFolders = (folders: FolderUI[], depth = 0) => (
     <ul className="list-none">
@@ -241,13 +192,17 @@ export function Explorer() {
   );
 
   return (
-    <div className="flex-1">
-      <div className="flex items-center justify-between">
-        <h1 className="p-6 text-lg font-semibold md:text-2xl">File Explorer</h1>
-        <AddFolder />
+    <DndProvider backend={HTML5Backend}>
+      <div className="flex-1">
+        <div className="flex items-center justify-between">
+          <h1 className="p-6 text-lg font-semibold md:text-2xl">
+            File Explorer
+          </h1>
+          <AddFolder />
+        </div>
+        {renderFolders(nestFolders(folders))}
       </div>
-      {renderFolders(nestFolders(folders))}
-    </div>
+    </DndProvider>
   );
 }
 
