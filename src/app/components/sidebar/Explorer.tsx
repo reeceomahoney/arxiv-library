@@ -7,8 +7,7 @@ import {
   Menu,
 } from "lucide-react";
 import React, { useRef } from "react";
-import { useDrag, useDrop, DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
+import { useDrag, useDrop, } from "react-dnd";
 
 import { Button } from "~/app/components/ui/button";
 import {
@@ -34,12 +33,16 @@ function FolderContextMenu({
   children: React.ReactNode;
   folder: FolderUI;
 }) {
-  const setFolderRenaming = useLibraryContext((state) => state.setFolderRenaming);
+  const setFolderRenaming = useLibraryContext(
+    (state) => state.setFolderRenaming,
+  );
   const deleteFolders = useLibraryContext((state) => state.deleteFolders);
 
   if (folder.name === "All Papers") {
     return <div onContextMenu={(e) => e.preventDefault()}>{children}</div>;
   }
+
+  const handleDeleteFolders = async () => await deleteFolders([folder.id]);
 
   return (
     <ContextMenu>
@@ -48,7 +51,7 @@ function FolderContextMenu({
         <ContextMenuItem onClick={() => setFolderRenaming(folder.id, true)}>
           Rename
         </ContextMenuItem>
-        <ContextMenuItem onClick={deleteFolders([folder.id])}>Delete</ContextMenuItem>
+        <ContextMenuItem onClick={handleDeleteFolders}>Delete</ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
   );
@@ -77,7 +80,9 @@ function FolderChevron({ folder }: { folder: FolderUI }) {
 // BUG: autofocus doesn't work
 function FolderContent({ folder, depth }: { folder: FolderUI; depth: number }) {
   const selectFolder = useLibraryContext((state) => state.selectFolder);
-  const setFolderRenaming = useLibraryContext((state) => state.setFolderRenaming);
+  const setFolderRenaming = useLibraryContext(
+    (state) => state.setFolderRenaming,
+  );
   const setFolderName = useLibraryContext((state) => state.setFolderName);
   const moveFolder = useLibraryContext((state) => state.moveFolder);
   const folders = useLibraryContext((state) => state.folders);
@@ -192,17 +197,13 @@ export function Explorer() {
   );
 
   return (
-    <DndProvider backend={HTML5Backend}>
-      <div className="flex-1">
-        <div className="flex items-center justify-between">
-          <h1 className="p-6 text-lg font-semibold md:text-2xl">
-            File Explorer
-          </h1>
-          <AddFolder />
-        </div>
-        {renderFolders(nestFolders(folders))}
+    <div className="flex-1">
+      <div className="flex items-center justify-between">
+        <h1 className="p-6 text-lg font-semibold md:text-2xl">File Explorer</h1>
+        <AddFolder />
       </div>
-    </DndProvider>
+      {renderFolders(nestFolders(folders))}
+    </div>
   );
 }
 

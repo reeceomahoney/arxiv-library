@@ -3,6 +3,8 @@
 import type { Folder, Paper } from "~/server/db/schema";
 import { createContext, useContext, useRef } from "react";
 import { createStore, useStore } from "zustand";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 import { moveFolder, movePapers, deleteFolders } from "~/server/actions";
 
@@ -49,9 +51,18 @@ const createLibraryStore = (initProps?: Partial<LibraryProps>) => {
     folders: [],
     papers: [],
   };
+
+  // Set "All Papers" folder as selected by default
+  const initialFolders = initProps?.folders ?? DEFAULT_PROPS.folders;
+  const foldersWithAllPapersSelected = initialFolders.map(folder => ({
+    ...folder,
+    isSelected: folder.name === "All Papers"
+  }));
+
   return createStore<LibraryState>((set, get) => ({
     ...DEFAULT_PROPS,
     ...initProps,
+    folders: foldersWithAllPapersSelected,
     selectedPapers: [],
     openPapers: [],
     activeTab: "my-library",
@@ -63,8 +74,8 @@ const createLibraryStore = (initProps?: Partial<LibraryProps>) => {
     addSelectedPaper: (paperId) =>
       set((state) => ({
         selectedPapers: state.selectedPapers.includes(paperId)
-          ? state.selectedPapers.filter((id) => id !== paper)
-          : [...state.selectedPapers, paper],
+          ? state.selectedPapers.filter((id) => id !== paperId)
+          : [...state.selectedPapers, paperId],
       })),
     setOpenPapers: (openPapers) => set({ openPapers }),
     addOpenPaper: (paper) =>
@@ -127,7 +138,7 @@ const createLibraryStore = (initProps?: Partial<LibraryProps>) => {
         ? get().selectedPapers
         : [...get().selectedPapers, itemId];
 
-      await movePapers(itemId, folderId);
+      await movePapers(draggedPapers, folderId);
       set((state) => ({
         papers: state.papers.map((paper) =>
           draggedPapers.includes(paper.id)
@@ -146,9 +157,10 @@ export function LibraryProvider({ children, ...props }: LibraryProviderProps) {
   if (!storeRef.current) {
     storeRef.current = createLibraryStore(props);
   }
+
   return (
     <LibraryContext.Provider value={storeRef.current}>
-      {children}
+      <DndProvider backend={HTML5Backend}>{children}</DndProvider>
     </LibraryContext.Provider>
   );
 }

@@ -2,8 +2,8 @@
 
 import { File, Files } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { useDrag, useDragLayer, DndProvider } from "react-dnd";
-import { getEmptyImage, HTML5Backend } from "react-dnd-html5-backend";
+import { useDrag, useDragLayer } from "react-dnd";
+import { getEmptyImage } from "react-dnd-html5-backend";
 
 import {
   Table,
@@ -99,7 +99,9 @@ export default function PaperTable() {
   const papers = useLibraryContext((state) => state.papers);
   const setPapers = useLibraryContext((state) => state.setPapers);
   const selectedPapers = useLibraryContext((state) => state.selectedPapers);
-  const setSelectedPapers = useLibraryContext((state) => state.setSelectedPapers);
+  const setSelectedPapers = useLibraryContext(
+    (state) => state.setSelectedPapers,
+  );
   const addSelectedPaper = useLibraryContext((state) => state.addSelectedPaper);
 
   const selectedFolder = folders.find((folder) => folder.isSelected);
@@ -118,7 +120,7 @@ export default function PaperTable() {
   };
 
   return (
-    <DndProvider backend={HTML5Backend}>
+    <>
       <PaperDragLayer count={selectedPapers.length} />
       <div className="flex flex-col items-start justify-between py-4 md:flex-row md:items-center">
         <h1 className="text-lg font-semibold md:text-2xl">{title}</h1>
@@ -163,6 +165,6 @@ export default function PaperTable() {
       ) : (
         <p>No papers</p>
       )}
-    </DndProvider>
+    </>
   );
 }
