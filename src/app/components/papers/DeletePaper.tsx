@@ -12,24 +12,18 @@ import {
 } from "~/app/components/ui/alert-dialog";
 import { Button } from "~/app/components/ui/button";
 import { deletePapers } from "~/server/actions";
-import { type Paper } from "~/server/db/schema";
+import { useLibraryContext } from "../providers/LibraryProvider";
 
-interface DeletePaperProps {
-  selectedPapers: number[];
-  setSelectedPapers: React.Dispatch<React.SetStateAction<number[]>>;
-  setPapers: React.Dispatch<React.SetStateAction<Paper[]>>;
-}
-
-export default function DeletePaper({
-  selectedPapers,
-  setSelectedPapers,
-  setPapers,
-}: DeletePaperProps) {
+export default function DeletePaper() {
+  const papers = useLibraryContext((state) => state.papers);
+  const setPapers = useLibraryContext((state) => state.setPapers);
+  const selectedPapers = useLibraryContext((state) => state.selectedPapers);
+  const setSelectedPapers = useLibraryContext(
+    (state) => state.setSelectedPapers,
+  );
   const handleDeletePapers = async () => {
     await deletePapers(selectedPapers);
-    setPapers((prevPapers) =>
-      prevPapers.filter((paper) => !selectedPapers.includes(paper.id)),
-    );
+    setPapers(papers.filter((paper) => !selectedPapers.includes(paper.id)));
     setSelectedPapers([]);
   };
 

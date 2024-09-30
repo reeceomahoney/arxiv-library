@@ -42,8 +42,6 @@ function FolderContextMenu({
     return <div onContextMenu={(e) => e.preventDefault()}>{children}</div>;
   }
 
-  const handleDeleteFolders = async () => await deleteFolders([folder.id]);
-
   return (
     <ContextMenu>
       <ContextMenuTrigger>{children}</ContextMenuTrigger>
@@ -51,7 +49,7 @@ function FolderContextMenu({
         <ContextMenuItem onClick={() => setFolderRenaming(folder.id, true)}>
           Rename
         </ContextMenuItem>
-        <ContextMenuItem onClick={handleDeleteFolders}>Delete</ContextMenuItem>
+        <ContextMenuItem onClick={() => deleteFolders([folder.id])}> Delete</ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
   );

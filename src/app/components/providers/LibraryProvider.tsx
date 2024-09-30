@@ -145,6 +145,7 @@ const createLibraryStore = (initProps?: Partial<LibraryProps>) => {
             ? { ...paper, folderId: folderId }
             : paper,
         ),
+        selectedPapers: [],
       }));
     },
   }));
