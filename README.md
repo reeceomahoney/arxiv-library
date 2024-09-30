@@ -1,6 +1,7 @@
 # TODO
 
 - [x] Clear add paper after submit
+- [x] save tab and folder state to local store
 - [ ] Add import papers
 - [ ] Add export bibtex
 - [ ] Add confirmation dialog for delete folder
@@ -13,7 +14,8 @@
 - [ ] Fix light mode colors
 - [ ] Add read/unread tag
 - [ ] add newsletter opt out
-- [ ] save tab and folder state to local store
 - [ ] get citation count on add
 - [ ] get bibtex on add
 - [ ] Make browser extension
+- [ ] add better loading state
+- [ ] Fix double paper bug
