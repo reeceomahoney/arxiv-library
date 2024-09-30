@@ -169,7 +169,7 @@ const createLibraryStore = (initProps?: Partial<LibraryProps>) => {
           activeTab: state.activeTab,
         }),
         onRehydrateStorage: () => (state) => {
-          state.setIsHydrated(true);
+          state?.setIsHydrated(true);
         },
       },
     ),
