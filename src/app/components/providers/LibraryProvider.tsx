@@ -124,11 +124,13 @@ const createLibraryStore = (initProps?: Partial<LibraryProps>) => {
         deleteFolders: async (folderIds) => {
           await deleteFolders(folderIds);
           set((state) => ({
-            folders: state.folders.filter(
-              (folder) =>
-                !folderIds.includes(folder.id) &&
-                !folderIds.includes(folder.parentFolderId),
-            ),
+            folders: state.folders.filter((folder) => {
+              const isInFolderIds = folderIds.includes(folder.id);
+              const isInParentFolderIds =
+                folder.parentFolderId !== null &&
+                folderIds.includes(folder.parentFolderId);
+              return !isInFolderIds && !isInParentFolderIds;
+            }),
           }));
         },
         moveFolder: async (itemId, folderId) => {
