@@ -57,7 +57,9 @@ function PaperRow({
   const ref = useRef(null);
 
   const handleOpenPaper = () => {
-    if (openPapers.includes(paper.id)) setActiveTab(String(paper.id));
+    if (openPapers.some((p) => p.id === paper.id)) {
+      setActiveTab(String(paper.id));
+    }
     addOpenPaper(paper);
     setActiveTab(String(paper.id));
   };
