@@ -50,12 +50,14 @@ function PaperRow({
   isSelected: boolean;
   handleSelectPaper: (id: number) => void;
 }) {
+  const openPapers = useLibraryContext((state) => state.openPapers);
   const addOpenPaper = useLibraryContext((state) => state.addOpenPaper);
   const setActiveTab = useLibraryContext((state) => state.setActiveTab);
 
   const ref = useRef(null);
 
   const handleOpenPaper = () => {
+    if (openPapers.includes(paper.id)) setActiveTab(String(paper.id));
     addOpenPaper(paper);
     setActiveTab(String(paper.id));
   };
@@ -97,7 +99,6 @@ function PaperRow({
 export default function PaperTable() {
   const folders = useLibraryContext((state) => state.folders);
   const papers = useLibraryContext((state) => state.papers);
-  const setPapers = useLibraryContext((state) => state.setPapers);
   const selectedPapers = useLibraryContext((state) => state.selectedPapers);
   const setSelectedPapers = useLibraryContext(
     (state) => state.setSelectedPapers,

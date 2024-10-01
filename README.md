@@ -2,6 +2,7 @@
 
 - [x] Clear add paper after submit
 - [x] save tab and folder state to local store
+- [x] Fix double paper bug
 - [ ] Add import papers
 - [ ] Add export bibtex
 - [ ] Add confirmation dialog for delete folder
@@ -18,5 +19,4 @@
 - [ ] get bibtex on add
 - [ ] Make browser extension
 - [ ] add better loading state
-- [ ] Fix double paper bug
 - [ ] switch folder on delete
