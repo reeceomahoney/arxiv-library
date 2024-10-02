@@ -12,11 +12,33 @@ import {
   LibraryProvider,
   type FolderUI,
 } from "./components/providers/LibraryProvider";
+import { folders } from "~/server/db/schema";
 
 async function fetchData(userId: string) {
-  const folderData = await db.query.folders.findMany({
+  let folderData = await db.query.folders.findMany({
     where: (folders, { eq }) => eq(folders.createdById, userId),
   });
+
+  // Check if "All Papers" folder exists
+  const allPapersFolder = folderData.find(
+    (folder) => folder.name === "All Papers",
+  );
+
+  if (!allPapersFolder) {
+    // Create "All Papers" folder if it doesn't exist
+    await db
+      .insert(folders)
+      .values({
+        name: "All Papers",
+        createdById: userId,
+      })
+      .returning();
+
+    // Refresh folder data
+    folderData = await db.query.folders.findMany({
+      where: (folders, { eq }) => eq(folders.createdById, userId),
+    });
+  }
 
   const paperData = await db.query.papers.findMany({
     where: (papers, { eq }) => eq(papers.createdById, userId),

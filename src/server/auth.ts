@@ -12,7 +12,6 @@ import { env } from "~/env";
 import { db } from "~/server/db";
 import {
   accounts,
-  folders,
   sessions,
   users,
   verificationTokens,
@@ -33,20 +32,6 @@ export const authOptions: NextAuthOptions = {
         id: user.id,
       },
     }),
-    // Create the "all papers" folder if it doesn't exist
-    async signIn({ user }) {
-      const existingFolder = await db.query.folders.findFirst({
-        where: (folders, { eq }) => eq(folders.createdById, user.id),
-      });
-
-      if (!existingFolder) {
-        await db
-          .insert(folders)
-          .values({ name: "All Papers", createdById: user.id });
-      }
-
-      return true;
-    },
   },
   adapter: DrizzleAdapter(db, {
     usersTable: users,

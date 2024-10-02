@@ -66,7 +66,7 @@ const createLibraryStore = (initProps?: Partial<LibraryProps>) => {
         isHydrated: false,
         setIsHydrated: (isHydrated) => set({ isHydrated }),
         setFolders: (folders) => set({ folders }),
-        addFolders: (folders) => set({ folders: folders.concat(folders) }),
+        addFolders: (folders) => set((state) => ({ folders: state.folders.concat(folders) })),
         setPapers: (papers) => set({ papers }),
         addPapers: (papers) =>
           set((state) => ({
