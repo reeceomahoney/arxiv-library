@@ -162,22 +162,22 @@ const links = [
   "http://arxiv.org/abs/2007.01520",
 ];
 
-seed(links)
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(() => {
-    console.log("Seeding done!");
-    process.exit(0);
-  });
-
-// clear()
+// seed(links)
 //   .catch((e) => {
 //     console.error(e);
 //     process.exit(1);
 //   })
 //   .finally(() => {
-//     console.log("Clearing done!");
+//     console.log("Seeding done!");
 //     process.exit(0);
 //   });
+
+clear()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(() => {
+    console.log("Clearing done!");
+    process.exit(0);
+  });
