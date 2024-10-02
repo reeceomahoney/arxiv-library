@@ -16,8 +16,9 @@ export default function AddPaper() {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    const idOrLink = arxivIdOrLink.trim();
     setArxivIdOrLink("Adding...");
-    const data = await createPaper(arxivIdOrLink, selectedFolder!.id);
+    const data = await createPaper(idOrLink, selectedFolder!.id);
     if (!data) return;
     addPapers([data]);
     setArxivIdOrLink("");
