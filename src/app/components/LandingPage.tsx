@@ -49,8 +49,8 @@ const features = [
     description: "Read all your papers in one place.",
   },
   {
-    title: "Filter Papers",
-    description: "Filter papers based on various criteria.",
+    title: "Search Papers",
+    description: "Filter your library by search terms.",
   },
 ];
 
