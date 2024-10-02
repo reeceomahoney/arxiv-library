@@ -18,10 +18,19 @@ export default function AddPaper() {
     event.preventDefault();
     const idOrLink = arxivIdOrLink.trim();
     setArxivIdOrLink("Adding...");
-    const data = await createPaper(idOrLink, selectedFolder!.id);
-    if (!data) return;
-    addPapers([data]);
-    setArxivIdOrLink("");
+
+    let retry = 0;
+    while (retry < 3) {
+      try {
+        const data = await createPaper(idOrLink, selectedFolder!.id);
+        if (!data) return;
+        addPapers([data]);
+        setArxivIdOrLink("");
+        return;
+      } catch (error) {
+        if (retry < 3) retry++;
+      }
+    }
   };
 
   return (
