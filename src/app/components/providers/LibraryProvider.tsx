@@ -165,6 +165,7 @@ const createLibraryStore = (initProps?: Partial<LibraryProps>) => {
       {
         name: "library",
         partialize: (state) => ({
+          // TODO: move these into db
           folders: state.folders,
           openPapers: state.openPapers,
           activeTab: state.activeTab,
