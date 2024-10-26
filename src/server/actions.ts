@@ -11,7 +11,7 @@ import {
 import { getServerAuthSession } from "~/server/auth";
 import { db } from "~/server/db";
 import { folders, papers, users } from "~/server/db/schema";
-import type { FolderUI } from "./components/providers/LibraryProvider";
+import type { FolderUI } from "~/app/components/providers/LibraryProvider";
 
 export async function createFolder(formData: FormData, userId: string) {
   // const session = await getServerAuthSession();
