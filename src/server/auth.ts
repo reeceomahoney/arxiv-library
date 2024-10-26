@@ -11,10 +11,10 @@ import GoogleProvider from "next-auth/providers/google";
 import { env } from "~/env";
 import { db } from "~/server/db";
 import {
-  accounts,
-  sessions,
+  // accounts,
+  // sessions,
   users,
-  verificationTokens,
+  // verificationTokens,
 } from "~/server/db/schema";
 
 declare module "next-auth" {
@@ -23,35 +23,35 @@ declare module "next-auth" {
   }
 }
 
-export const authOptions: NextAuthOptions = {
-  callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
-  },
-  adapter: DrizzleAdapter(db, {
-    usersTable: users,
-    accountsTable: accounts,
-    sessionsTable: sessions,
-    verificationTokensTable: verificationTokens,
-  }) as Adapter,
-  providers: [
-    GitHubProvider({
-      clientId: env.GITHUB_CLIENT_ID,
-      clientSecret: env.GITHUB_CLIENT_SECRET,
-    }),
-    GoogleProvider({
-      clientId: env.GOOGLE_CLIENT_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET,
-    }),
-  ],
-  pages: {
-    signIn: "/signin",
-  },
-};
-
-export const getServerAuthSession = () => getServerSession(authOptions);
+// export const authOptions: NextAuthOptions = {
+//   callbacks: {
+//     session: ({ session, user }) => ({
+//       ...session,
+//       user: {
+//         ...session.user,
+//         id: user.id,
+//       },
+//     }),
+//   },
+//   adapter: DrizzleAdapter(db, {
+//     usersTable: users,
+//     accountsTable: accounts,
+//     sessionsTable: sessions,
+//     verificationTokensTable: verificationTokens,
+//   }) as Adapter,
+//   providers: [
+//     GitHubProvider({
+//       clientId: env.GITHUB_CLIENT_ID,
+//       clientSecret: env.GITHUB_CLIENT_SECRET,
+//     }),
+//     GoogleProvider({
+//       clientId: env.GOOGLE_CLIENT_ID,
+//       clientSecret: env.GOOGLE_CLIENT_SECRET,
+//     }),
+//   ],
+//   pages: {
+//     signIn: "/signin",
+//   },
+// };
+//
+// export const getServerAuthSession = () => getServerSession(authOptions);

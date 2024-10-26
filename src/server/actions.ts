@@ -8,7 +8,7 @@ import {
   ArxivPaperDataSchema,
   ArxivResponseSchema,
 } from "~/lib/definitions";
-import { getServerAuthSession } from "~/server/auth";
+// import { getServerAuthSession } from "~/server/auth";
 import { db } from "~/server/db";
 import { folders, papers, users } from "~/server/db/schema";
 import type { FolderUI } from "~/app/components/providers/LibraryProvider";
