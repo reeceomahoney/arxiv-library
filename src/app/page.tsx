@@ -67,9 +67,9 @@ export default function Page() {
               <SheetExplorer />
               <PaperSearch />
               <ModeToggle />
-              <AccountDropdown
-                userName={localStorage.getItem("userId") ?? ""}
-              />
+              {/* <AccountDropdown */}
+              {/*   userName={localStorage.getItem("userId") ?? ""} */}
+              {/* /> */}
             </header>
             <main className="grow p-4 lg:p-6">
               <PaperTabs />
