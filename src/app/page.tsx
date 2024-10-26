@@ -1,69 +1,50 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import AccountDropdown from "~/app/components/header/AccountDropdown";
 import { Explorer, SheetExplorer } from "~/app/components/sidebar/Explorer";
 import { ModeToggle } from "~/app/components/header/ModeToggle";
 import PaperTabs from "~/app/components/papers/PaperTabs";
-import { getServerAuthSession } from "~/server/auth";
-import { db } from "~/server/db";
-import LandingPage from "./components/LandingPage";
 import PaperSearch from "./components/header/PaperSearch";
 import { ThemeProvider } from "./components/providers/ThemeProvider";
 import Title from "./components/sidebar/Title";
 import {
   LibraryProvider,
-  type FolderUI,
+  type LibraryProps,
 } from "./components/providers/LibraryProvider";
-import { folders } from "~/server/db/schema";
+import { initUser, fetchUserData } from "~/server/actions";
 
-async function fetchData(userId: string) {
-  let folderData = await db.query.folders.findMany({
-    where: (folders, { eq }) => eq(folders.createdById, userId),
-  });
+export default function Page() {
+  const [userData, setUserData] = useState<LibraryProps | null>(null);
 
-  // Check if "All Papers" folder exists
-  const allPapersFolder = folderData.find(
-    (folder) => folder.name === "All Papers",
-  );
+  useEffect(() => {
+    const initializeUser = async () => {
+      let userId = localStorage.getItem("userId");
 
-  if (!allPapersFolder) {
-    // Create "All Papers" folder if it doesn't exist
-    await db
-      .insert(folders)
-      .values({
-        name: "All Papers",
-        createdById: userId,
-      })
-      .returning();
+      // create user if no id is found
+      if (!userId) {
+        userId = crypto.randomUUID();
+        localStorage.setItem("userId", userId);
+        await initUser(userId);
+      }
 
-    // Refresh folder data
-    folderData = await db.query.folders.findMany({
-      where: (folders, { eq }) => eq(folders.createdById, userId),
-    });
+      const data = await fetchUserData(userId);
+      setUserData(data);
+    };
+
+    initializeUser().catch(console.error);
+  }, []);
+
+  if (!userData) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        Loading...
+      </div>
+    );
   }
 
-  const paperData = await db.query.papers.findMany({
-    where: (papers, { eq }) => eq(papers.createdById, userId),
-  });
-
-  // Set "All Papers" folder as selected by default
-  const folderUIData = folderData.map((folder) => ({
-    ...folder,
-    isOpen: true,
-    isSelected: folder.name === "All Papers",
-    isRenaming: false,
-  })) as FolderUI[];
-
-  return { folderUIData, paperData };
-}
-
-export default async function Page() {
-  const session = await getServerAuthSession();
-
-  if (!session) return <LandingPage />;
-
-  const { folderUIData, paperData } = await fetchData(session.user.id);
-
   return (
-    <LibraryProvider folders={folderUIData} papers={paperData}>
+    <LibraryProvider {...userData}>
       <ThemeProvider
         attribute="class"
         defaultTheme="system"
@@ -84,7 +65,9 @@ export default async function Page() {
               <SheetExplorer />
               <PaperSearch />
               <ModeToggle />
-              <AccountDropdown userName={session.user.name ?? ""} />
+              <AccountDropdown
+                userName={localStorage.getItem("userId") ?? ""}
+              />
             </header>
             <main className="grow p-4 lg:p-6">
               <PaperTabs />

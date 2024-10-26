@@ -10,7 +10,8 @@ import {
 } from "~/lib/definitions";
 import { getServerAuthSession } from "~/server/auth";
 import { db } from "~/server/db";
-import { folders, papers } from "~/server/db/schema";
+import { folders, papers, users } from "~/server/db/schema";
+import type { FolderUI } from "./components/providers/LibraryProvider";
 
 export async function createFolder(formData: FormData) {
   const session = await getServerAuthSession();
@@ -131,4 +132,57 @@ async function parseArxivResponse(response: Response) {
   });
 
   return paperData;
+}
+
+export async function initUser(userId: string) {
+  // Check if user exists
+  const existingUser = await db.query.users.findFirst({
+    where: (users, { eq }) => eq(users.id, userId),
+  });
+
+  if (!existingUser) {
+    // Create new user
+    await db.insert(users).values({ id: userId });
+  }
+}
+
+export async function fetchUserData(userId: string) {
+  let folderData = await db.query.folders.findMany({
+    where: (folders, { eq }) => eq(folders.createdById, userId),
+  });
+
+  // Check if "All Papers" folder exists
+  const allPapersFolder = folderData.find(
+    (folder) => folder.name === "All Papers",
+  );
+
+  if (!allPapersFolder) {
+    // Create "All Papers" folder if it doesn't exist
+    await db
+      .insert(folders)
+      .values({
+        name: "All Papers",
+        createdById: userId,
+      })
+      .returning();
+
+    // Refresh folder data
+    folderData = await db.query.folders.findMany({
+      where: (folders, { eq }) => eq(folders.createdById, userId),
+    });
+  }
+
+  const paperData = await db.query.papers.findMany({
+    where: (papers, { eq }) => eq(papers.createdById, userId),
+  });
+
+  // Set "All Papers" folder as selected by default
+  const folderUIData = folderData.map((folder) => ({
+    ...folder,
+    isOpen: true,
+    isSelected: folder.name === "All Papers",
+    isRenaming: false,
+  })) as FolderUI[];
+
+  return { folderUIData, paperData };
 }

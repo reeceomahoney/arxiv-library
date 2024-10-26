@@ -17,7 +17,7 @@ export type FolderUI = Folder & {
   folders: FolderUI[];
 };
 
-interface LibraryProps {
+export interface LibraryProps {
   folders: FolderUI[];
   papers: Paper[];
 }
