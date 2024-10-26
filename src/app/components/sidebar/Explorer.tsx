@@ -27,6 +27,7 @@ import { collectPapers, nestFolders } from "~/lib/utils";
 import {
   renameFolder,
   deleteFolders as deleteFoldersServer,
+  moveFolder as moveFolderServer,
 } from "~/server/actions";
 
 function FolderContextMenu({
@@ -115,6 +116,7 @@ function FolderContent({ folder, depth }: { folder: FolderUI; depth: number }) {
     drop: async (item: { id: number }, monitor) => {
       // Folder drop
       if (monitor.getItemType() === "FOLDER") {
+        await moveFolderServer(item.id, folder.id, userId);
         await moveFolder(item.id, folder.id);
       } else if (monitor.getItemType() === "PAPER") {
         await dragPapers(item.id, folder.id);

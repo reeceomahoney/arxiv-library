@@ -70,11 +70,11 @@ export async function deleteFolders(folderIds: number[], userId: string) {
   return { success: true };
 }
 
-export async function moveFolder(folderId: number, newParentId: number) {
+export async function moveFolder(folderId: number, newParentId: number, userId: string) {
   await db
     .update(folders)
     .set({ parentFolderId: newParentId })
-    .where(eq(folders.id, folderId));
+    .where(and(eq(folders.id, folderId), eq(folders.createdById, userId)));
 }
 
 export async function createPaper(

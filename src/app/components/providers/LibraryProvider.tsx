@@ -70,7 +70,6 @@ const createLibraryStore = (initProps?: Partial<LibraryProps>) => {
           set((state) => ({ folders: state.folders.concat(folders) })),
         moveFolder: async (itemId, folderId) => {
           if (itemId === folderId) return;
-          await moveFolder(itemId, folderId);
           set((state) => ({
             folders: state.folders.map((folder) =>
               folder.id === itemId
