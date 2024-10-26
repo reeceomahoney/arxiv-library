@@ -20,3 +20,4 @@
 - [ ] Make browser extension
 - [ ] add better loading state
 - [ ] switch folder on delete
+- [ ] save open tabs and active tab to server
