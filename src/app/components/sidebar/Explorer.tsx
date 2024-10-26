@@ -24,7 +24,10 @@ import type { FolderUI } from "~/app/components/providers/LibraryProvider";
 import { useLibraryContext } from "~/app/components/providers/LibraryProvider";
 import { DialogDescription, DialogTitle } from "~/app/components/ui/dialog";
 import { collectPapers, nestFolders } from "~/lib/utils";
-import { renameFolder } from "~/server/actions";
+import {
+  renameFolder,
+  deleteFolders as deleteFoldersServer,
+} from "~/server/actions";
 
 function FolderContextMenu({
   children,
@@ -37,6 +40,12 @@ function FolderContextMenu({
     (state) => state.setFolderRenaming,
   );
   const deleteFolders = useLibraryContext((state) => state.deleteFolders);
+  const userId = useLibraryContext((state) => state.userId);
+
+  const handleDeleteFolder = async (folderIds: number[]) => {
+    await deleteFoldersServer(folderIds, userId);
+    deleteFolders(folderIds);
+  };
 
   if (folder.name === "All Papers") {
     return <div onContextMenu={(e) => e.preventDefault()}>{children}</div>;
@@ -49,7 +58,7 @@ function FolderContextMenu({
         <ContextMenuItem onClick={() => setFolderRenaming(folder.id, true)}>
           Rename
         </ContextMenuItem>
-        <ContextMenuItem onClick={() => deleteFolders([folder.id])}>
+        <ContextMenuItem onClick={() => handleDeleteFolder([folder.id])}>
           {" "}
           Delete
         </ContextMenuItem>
@@ -89,6 +98,7 @@ function FolderContent({ folder, depth }: { folder: FolderUI; depth: number }) {
   const folders = useLibraryContext((state) => state.folders);
   const papers = useLibraryContext((state) => state.papers);
   const dragPapers = useLibraryContext((state) => state.dragPapers);
+  const userId = useLibraryContext((state) => state.userId);
 
   const ref = useRef(null);
 
@@ -121,7 +131,7 @@ function FolderContent({ folder, depth }: { folder: FolderUI; depth: number }) {
     const newName =
       ((e.target as HTMLFormElement)?.elements[0] as HTMLInputElement)?.value ??
       folder.name;
-    await renameFolder(folder.id, newName);
+    await renameFolder(folder.id, newName, userId);
     setFolderName(folder.id, newName);
     setFolderRenaming(folder.id, false);
   };

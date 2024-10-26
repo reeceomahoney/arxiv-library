@@ -7,7 +7,7 @@ import { persist } from "zustand/middleware";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
-import { moveFolder, movePapers, deleteFolders } from "~/server/actions";
+import { moveFolder, movePapers  } from "~/server/actions";
 
 // Extend the Folder type to include UI state
 export type FolderUI = Folder & {
@@ -26,7 +26,7 @@ interface LibraryState extends LibraryProps {
   // folders
   addFolders: (folders: FolderUI[]) => void;
   moveFolder: (itemId: number, folderId: number) => Promise<void>;
-  deleteFolders: (folderIds: number[]) => Promise<void>;
+  deleteFolders: (folderIds: number[]) => void;
   toggleFolderOpen: (id: number) => void;
   selectFolder: (id: number) => void;
   setFolderName: (folderId: number, name: string) => void;
@@ -44,6 +44,7 @@ interface LibraryState extends LibraryProps {
   dragPapers: (itemId: number, folderId: number) => Promise<void>;
 
   // misc
+  userId: string;
   activeTab: string;
   setActiveTab: (activeTab: string) => void;
   isHydrated: boolean;
@@ -78,8 +79,7 @@ const createLibraryStore = (initProps?: Partial<LibraryProps>) => {
             ),
           }));
         },
-        deleteFolders: async (folderIds) => {
-          await deleteFolders(folderIds);
+        deleteFolders: (folderIds) => {
           set((state) => ({
             folders: state.folders.filter((folder) => {
               const isInFolderIds = folderIds.includes(folder.id);
@@ -157,6 +157,7 @@ const createLibraryStore = (initProps?: Partial<LibraryProps>) => {
         },
 
         // misc
+        userId: localStorage.getItem("userId")!,
         activeTab: "my-library",
         setActiveTab: (activeTab) => set({ activeTab }),
         isHydrated: false,

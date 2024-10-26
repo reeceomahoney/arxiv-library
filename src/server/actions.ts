@@ -1,6 +1,6 @@
 "use server";
 
-import { eq, inArray } from "drizzle-orm";
+import { eq, and, inArray } from "drizzle-orm";
 import { parseStringPromise } from "xml2js";
 
 import {
@@ -13,9 +13,9 @@ import { db } from "~/server/db";
 import { folders, papers, users } from "~/server/db/schema";
 import type { FolderUI } from "./components/providers/LibraryProvider";
 
-export async function createFolder(formData: FormData) {
-  const session = await getServerAuthSession();
-  if (!session) return null;
+export async function createFolder(formData: FormData, userId: string) {
+  // const session = await getServerAuthSession();
+  // if (!session) return null;
 
   const name = formData.get("name") as string;
   const parentFolderIdValue = formData.get("selectedFolderId");
@@ -25,29 +25,47 @@ export async function createFolder(formData: FormData) {
 
   const newFolder = await db
     .insert(folders)
-    .values({ name, parentFolderId, createdById: session.user.id })
+    .values({ name, parentFolderId, createdById: userId })
     .returning();
 
   return newFolder[0];
 }
 
-export async function renameFolder(folderId: number, name: string) {
-  const session = await getServerAuthSession();
-  if (!session) return null;
+export async function renameFolder(
+  folderId: number,
+  name: string,
+  userId: string,
+) {
+  // const session = await getServerAuthSession();
+  // if (!session) return null;
 
-  await db.update(folders).set({ name }).where(eq(folders.id, folderId));
+  await db
+    .update(folders)
+    .set({ name })
+    .where(and(eq(folders.id, folderId), eq(folders.createdById, userId)));
 
   return { success: true };
 }
 
-export async function deleteFolders(folderIds: number[]) {
-  const session = await getServerAuthSession();
-  if (!session) return null;
+export async function deleteFolders(folderIds: number[], userId: string) {
+  // const session = await getServerAuthSession();
+  // if (!session) return null;
 
-  await db.delete(folders).where(inArray(folders.id, folderIds));
+  await db
+    .delete(folders)
+    .where(
+      and(inArray(folders.id, folderIds), eq(folders.createdById, userId)),
+    );
 
   // Schema can't self reference so we need to delete subfolders manually
-  await db.delete(folders).where(inArray(folders.parentFolderId, folderIds));
+  await db
+    .delete(folders)
+    .where(
+      and(
+        inArray(folders.parentFolderId, folderIds),
+        eq(folders.createdById, userId),
+      ),
+    );
 
   return { success: true };
 }

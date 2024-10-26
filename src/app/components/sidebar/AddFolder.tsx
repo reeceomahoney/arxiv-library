@@ -23,6 +23,7 @@ import {
 export default function AddFolder() {
   const folders = useLibraryContext((state) => state.folders);
   const addFolders = useLibraryContext((state) => state.addFolders);
+  const userId = useLibraryContext((state) => state.userId);
 
   const selectedFolder = folders.find((folder) => folder.isSelected);
 
@@ -33,7 +34,7 @@ export default function AddFolder() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const newFolder = await createFolder(formData);
+    const newFolder = await createFolder(formData, userId);
     const newFolderUI = {
       ...newFolder,
       isOpen: false,
