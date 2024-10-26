@@ -12,6 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogClose,
+  DialogDescription,
 } from "~/app/components/ui/dialog";
 import { createFolder } from "~/server/actions";
 import {
@@ -52,12 +53,15 @@ export default function AddFolder() {
           <Plus className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent aria-describedby="dialog-description">
         <DialogHeader>
           <DialogTitle>Create Folder</DialogTitle>
+          <DialogDescription>
+            Subfolder of {selectedFolder.name}
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
-          <div className="flex items-center gap-4 py-4">
+          <div className="flex items-center gap-4 py-2">
             <Label htmlFor="name" className="text-right">
               Name
             </Label>
@@ -67,12 +71,11 @@ export default function AddFolder() {
               name="selectedFolderId"
               value={selectedFolder.id}
             />
-            <DialogClose>
+            <DialogClose asChild>
               <Button type="submit">Add</Button>
             </DialogClose>
           </div>
         </form>
-        <DialogFooter>Subfolder of {selectedFolder.name}</DialogFooter>
       </DialogContent>
     </Dialog>
   );
