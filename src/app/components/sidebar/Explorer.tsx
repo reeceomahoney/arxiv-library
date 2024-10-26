@@ -185,12 +185,8 @@ function FolderContent({ folder, depth }: { folder: FolderUI; depth: number }) {
 
 export function Explorer() {
   const folders = useLibraryContext((state) => state.folders);
-  const isHydrated = useLibraryContext((state) => state.isHydrated);
 
   const renderFolders = (folders: FolderUI[], depth = 0) => {
-    if (!isHydrated) {
-      return <div>Loading...</div>;
-    }
     return (
       <ul className="list-none">
         {folders.map((folder) => {

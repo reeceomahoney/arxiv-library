@@ -17,11 +17,6 @@ export default function PaperTabs() {
   const setOpenPapers = useLibraryContext((state) => state.setOpenPapers);
   const activeTab = useLibraryContext((state) => state.activeTab);
   const setActiveTab = useLibraryContext((state) => state.setActiveTab);
-  const isHydrated = useLibraryContext((state) => state.isHydrated);
-
-  if (!isHydrated) {
-    return <div>Loading...</div>;
-  }
 
   const handleClosePaper = (id: number) => {
     const newPapers = openPapers.filter((p) => p.id !== id);

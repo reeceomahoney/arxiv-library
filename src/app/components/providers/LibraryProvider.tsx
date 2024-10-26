@@ -7,7 +7,7 @@ import { persist } from "zustand/middleware";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
-import { moveFolder, movePapers  } from "~/server/actions";
+import { moveFolder, movePapers } from "~/server/actions";
 
 // Extend the Folder type to include UI state
 export type FolderUI = Folder & {
@@ -47,8 +47,6 @@ interface LibraryState extends LibraryProps {
   userId: string;
   activeTab: string;
   setActiveTab: (activeTab: string) => void;
-  isHydrated: boolean;
-  setIsHydrated: (isHydrated: boolean) => void;
 }
 
 type LibraryStore = ReturnType<typeof createLibraryStore>;
@@ -60,122 +58,104 @@ const createLibraryStore = (initProps?: Partial<LibraryProps>) => {
     papers: [],
   };
 
-  return create<LibraryState>()(
-    persist(
-      (set, get) => ({
-        ...DEFAULT_PROPS,
-        ...initProps,
-        //folders
-        addFolders: (folders) =>
-          set((state) => ({ folders: state.folders.concat(folders) })),
-        moveFolder: async (itemId, folderId) => {
-          if (itemId === folderId) return;
-          set((state) => ({
-            folders: state.folders.map((folder) =>
-              folder.id === itemId
-                ? { ...folder, parentFolderId: folderId }
-                : folder,
-            ),
-          }));
-        },
-        deleteFolders: (folderIds) => {
-          set((state) => ({
-            folders: state.folders.filter((folder) => {
-              const isInFolderIds = folderIds.includes(folder.id);
-              const isInParentFolderIds =
-                folder.parentFolderId !== null &&
-                folderIds.includes(folder.parentFolderId);
-              return !isInFolderIds && !isInParentFolderIds;
-            }),
-          }));
-        },
-        toggleFolderOpen: (id) =>
-          set((state) => ({
-            folders: state.folders.map((folder) =>
-              folder.id === id ? { ...folder, isOpen: !folder.isOpen } : folder,
-            ),
-          })),
-        selectFolder: (id) =>
-          set((state) => ({
-            folders: state.folders.map((folder) =>
-              folder.id === id
-                ? { ...folder, isSelected: true }
-                : { ...folder, isSelected: false },
-            ),
-          })),
-        setFolderName: (folderId, name) =>
-          set((state) => ({
-            folders: state.folders.map((folder) =>
-              folder.id === folderId ? { ...folder, name } : folder,
-            ),
-          })),
-        setFolderRenaming: (folderId, isRenaming) =>
-          set((state) => ({
-            folders: state.folders.map((folder) =>
-              folder.id === folderId ? { ...folder, isRenaming } : folder,
-            ),
-          })),
-
-        // papers
-        selectedPapers: [],
-        openPapers: [],
-        setPapers: (papers) => set({ papers }),
-        addPapers: (papers) =>
-          set((state) => ({
-            papers: state.papers.concat(papers),
-          })),
-        setSelectedPapers: (selectedPapers) => set({ selectedPapers }),
-        addSelectedPaper: (paperId) =>
-          set((state) => ({
-            selectedPapers: state.selectedPapers.includes(paperId)
-              ? state.selectedPapers.filter((id) => id !== paperId)
-              : [...state.selectedPapers, paperId],
-          })),
-        setOpenPapers: (openPapers) => set({ openPapers }),
-        addOpenPaper: (paper) =>
-          set((state) => ({
-            openPapers: state.openPapers.includes(paper)
-              ? state.openPapers
-              : [...state.openPapers, paper],
-          })),
-        dragPapers: async (itemId, folderId) => {
-          // Add the current paper to selected papers if it's not already there
-          const draggedPapers = get().selectedPapers.includes(itemId)
-            ? get().selectedPapers
-            : [...get().selectedPapers, itemId];
-
-          await movePapers(draggedPapers, folderId, get().userId);
-          set((state) => ({
-            papers: state.papers.map((paper) =>
-              draggedPapers.includes(paper.id)
-                ? { ...paper, folderId: folderId }
-                : paper,
-            ),
-            selectedPapers: [],
-          }));
-        },
-
-        // misc
-        userId: localStorage.getItem("userId")!,
-        activeTab: "my-library",
-        setActiveTab: (activeTab) => set({ activeTab }),
-        isHydrated: false,
-        setIsHydrated: (isHydrated) => set({ isHydrated }),
-      }),
-      {
-        name: "library",
-        partialize: (state) => ({
-          // TODO: move these into db
-          folders: state.folders,
-          openPapers: state.openPapers,
-          activeTab: state.activeTab,
+  return create<LibraryState>()((set, get) => ({
+    ...DEFAULT_PROPS,
+    ...initProps,
+    //folders
+    addFolders: (folders) =>
+      set((state) => ({ folders: state.folders.concat(folders) })),
+    moveFolder: async (itemId, folderId) => {
+      if (itemId === folderId) return;
+      set((state) => ({
+        folders: state.folders.map((folder) =>
+          folder.id === itemId
+            ? { ...folder, parentFolderId: folderId }
+            : folder,
+        ),
+      }));
+    },
+    deleteFolders: (folderIds) => {
+      set((state) => ({
+        folders: state.folders.filter((folder) => {
+          const isInFolderIds = folderIds.includes(folder.id);
+          const isInParentFolderIds =
+            folder.parentFolderId !== null &&
+            folderIds.includes(folder.parentFolderId);
+          return !isInFolderIds && !isInParentFolderIds;
         }),
-        onRehydrateStorage: () => (state) => {
-          state?.setIsHydrated(true);
-        },
-      },
-    ),
-  );
+      }));
+    },
+    toggleFolderOpen: (id) =>
+      set((state) => ({
+        folders: state.folders.map((folder) =>
+          folder.id === id ? { ...folder, isOpen: !folder.isOpen } : folder,
+        ),
+      })),
+    selectFolder: (id) =>
+      set((state) => ({
+        folders: state.folders.map((folder) =>
+          folder.id === id
+            ? { ...folder, isSelected: true }
+            : { ...folder, isSelected: false },
+        ),
+      })),
+    setFolderName: (folderId, name) =>
+      set((state) => ({
+        folders: state.folders.map((folder) =>
+          folder.id === folderId ? { ...folder, name } : folder,
+        ),
+      })),
+    setFolderRenaming: (folderId, isRenaming) =>
+      set((state) => ({
+        folders: state.folders.map((folder) =>
+          folder.id === folderId ? { ...folder, isRenaming } : folder,
+        ),
+      })),
+
+    // papers
+    selectedPapers: [],
+    openPapers: [],
+    setPapers: (papers) => set({ papers }),
+    addPapers: (papers) =>
+      set((state) => ({
+        papers: state.papers.concat(papers),
+      })),
+    setSelectedPapers: (selectedPapers) => set({ selectedPapers }),
+    addSelectedPaper: (paperId) =>
+      set((state) => ({
+        selectedPapers: state.selectedPapers.includes(paperId)
+          ? state.selectedPapers.filter((id) => id !== paperId)
+          : [...state.selectedPapers, paperId],
+      })),
+    setOpenPapers: (openPapers) => set({ openPapers }),
+    addOpenPaper: (paper) =>
+      set((state) => ({
+        openPapers: state.openPapers.includes(paper)
+          ? state.openPapers
+          : [...state.openPapers, paper],
+      })),
+    dragPapers: async (itemId, folderId) => {
+      // Add the current paper to selected papers if it's not already there
+      const draggedPapers = get().selectedPapers.includes(itemId)
+        ? get().selectedPapers
+        : [...get().selectedPapers, itemId];
+
+      await movePapers(draggedPapers, folderId, get().userId);
+      set((state) => ({
+        papers: state.papers.map((paper) =>
+          draggedPapers.includes(paper.id)
+            ? { ...paper, folderId: folderId }
+            : paper,
+        ),
+        selectedPapers: [],
+      }));
+    },
+
+    // misc
+    userId: localStorage.getItem("userId")!,
+    activeTab: "my-library",
+    setActiveTab: (activeTab) => set({ activeTab }),
+  }));
 };
 
 const LibraryContext = createContext<LibraryStore | null>(null);
