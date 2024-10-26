@@ -70,7 +70,11 @@ export async function deleteFolders(folderIds: number[], userId: string) {
   return { success: true };
 }
 
-export async function moveFolder(folderId: number, newParentId: number, userId: string) {
+export async function moveFolder(
+  folderId: number,
+  newParentId: number,
+  userId: string,
+) {
   await db
     .update(folders)
     .set({ parentFolderId: newParentId })
@@ -80,9 +84,10 @@ export async function moveFolder(folderId: number, newParentId: number, userId: 
 export async function createPaper(
   arxivIdOrLink: string,
   selectedFolderId: number,
+  userId: string,
 ) {
-  const session = await getServerAuthSession();
-  if (!session) return null;
+  // const session = await getServerAuthSession();
+  // if (!session) return null;
 
   const arxivId = extractArxivId(arxivIdOrLink);
   const response = await fetch(
@@ -101,27 +106,36 @@ export async function createPaper(
       categories: paperData.categories,
       link: paperData.link,
       folderId: selectedFolderId,
-      createdById: session.user.id,
+      createdById: userId,
     })
     .returning();
 
   return newPaper[0];
 }
 
-export async function deletePapers(paperIds: number[]) {
-  const session = await getServerAuthSession();
-  if (!session) return null;
+export async function deletePapers(paperIds: number[], userId: string) {
+  // const session = await getServerAuthSession();
+  // if (!session) return null;
 
-  await db.delete(papers).where(inArray(papers.id, paperIds));
+  await db
+    .delete(papers)
+    .where(and(inArray(papers.id, paperIds), eq(papers.createdById, userId)));
 
   return { success: true };
 }
 
-export async function movePapers(paperIds: number[], folderId: number) {
-  const session = await getServerAuthSession();
-  if (!session) return null;
+export async function movePapers(
+  paperIds: number[],
+  folderId: number,
+  userId: string,
+) {
+  // const session = await getServerAuthSession();
+  // if (!session) return null;
 
-  await db.update(papers).set({ folderId }).where(inArray(papers.id, paperIds));
+  await db
+    .update(papers)
+    .set({ folderId })
+    .where(and(inArray(papers.id, paperIds), eq(papers.createdById, userId)));
 
   return { success: true };
 }
@@ -202,5 +216,5 @@ export async function fetchUserData(userId: string) {
     isRenaming: false,
   })) as FolderUI[];
 
-  return { folderUIData, paperData };
+  return { folders: folderUIData, papers: paperData };
 }

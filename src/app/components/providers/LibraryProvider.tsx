@@ -144,7 +144,7 @@ const createLibraryStore = (initProps?: Partial<LibraryProps>) => {
             ? get().selectedPapers
             : [...get().selectedPapers, itemId];
 
-          await movePapers(draggedPapers, folderId);
+          await movePapers(draggedPapers, folderId, get().userId);
           set((state) => ({
             papers: state.papers.map((paper) =>
               draggedPapers.includes(paper.id)

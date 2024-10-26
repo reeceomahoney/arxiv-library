@@ -10,6 +10,7 @@ import { Input } from "../ui/input";
 export default function AddPaper() {
   const folders = useLibraryContext((state) => state.folders);
   const addPapers = useLibraryContext((state) => state.addPapers);
+  const userId = useLibraryContext((state) => state.userId);
   const [arxivIdOrLink, setArxivIdOrLink] = useState("");
 
   const selectedFolder = folders.find((folder) => folder.isSelected);
@@ -22,7 +23,7 @@ export default function AddPaper() {
     let retry = 0;
     while (retry < 3) {
       try {
-        const data = await createPaper(idOrLink, selectedFolder!.id);
+        const data = await createPaper(idOrLink, selectedFolder!.id, userId);
         if (!data) return;
         addPapers([data]);
         setArxivIdOrLink("");

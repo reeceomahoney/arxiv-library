@@ -21,8 +21,10 @@ export default function DeletePaper() {
   const setSelectedPapers = useLibraryContext(
     (state) => state.setSelectedPapers,
   );
+  const userId = useLibraryContext((state) => state.userId);
+
   const handleDeletePapers = async () => {
-    await deletePapers(selectedPapers);
+    await deletePapers(selectedPapers, userId);
     setPapers(papers.filter((paper) => !selectedPapers.includes(paper.id)));
     setSelectedPapers([]);
   };
